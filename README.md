@@ -1,5 +1,7 @@
 # Final Project: Langsbay
 
+[![Build Status](https://travis-ci.com/albertonl/langsbay.svg?branch=master)](https://travis-ci.com/albertonl/langsbay)
+
 <img src="/src/learning/static/learning/img/logo-dark.png" alt="Langsbay Logo" width="350">
 
 **Langsbay** is intended to be a collaborative and community-driven application to help you learn a new language easily and quickly. As of now, it includes an open dictionary in more than 20 languages, but hopefully, it will continue to grow and we will add more features accordingly.
