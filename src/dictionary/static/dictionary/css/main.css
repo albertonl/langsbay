@@ -1,0 +1,81 @@
+/* main.css */
+
+.main-content-dictionary {
+  margin-left: 30%;
+  margin-right: 30%;
+  padding-top: 50px;
+}
+
+.main-content-dictionary-term-search {
+  margin-left: 15%;
+  margin-right: 15%;
+  margin-top: 15px;
+}
+
+.main-content-dictionary-term-search #dictionaryLanguage {
+  margin-left: 10px;
+}
+
+.dictionary-term-section {
+  margin-top: 20px;
+}
+
+.dictionary-term-language-select {
+  border-radius: 8px !important;
+}
+
+.modif-btn-group i {
+  cursor: pointer;
+}
+
+.modif-btn-group:not([data-report="lemma"]) {
+  float: right;
+  display: none;
+}
+
+.modif-btn-group [data-mod="edit"]:hover {
+  color: #2b70e0;
+}
+
+.modif-btn-group [data-mod="report"]:hover {
+  color: #dc3545;
+}
+
+.dictionary-term-section-toggle h3 {
+  cursor: pointer;
+}
+
+[data-report="lemma"] {
+  font-size: 24px;
+}
+
+#dictionaryAddTranslationSearch {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+  border-top-left-radius: 8px;
+  border-bottom-left-radius: 8px;
+}
+
+#dictionaryAddTranslationToggle {
+  border-top-right-radius: 8px;
+  border-bottom-right-radius: 8px;
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+
+  margin-right: 5px;
+}
+
+#dictionaryAddTranslationLanguage {
+  margin-left: 5px;
+}
+
+@media only screen and (max-width: 768px) {
+  .main-content-dictionary {
+    margin-left: 5%;
+    margin-right: 5%;
+  }
+  .main-content-dictionary-term-search {
+    margin-left: 5%;
+    margin-right: 5%;
+  }
+}

@@ -1,0 +1,233 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap');
+
+/* Color palette: https://coolors.co/454545-dbd56e-9fc2cc-92d76d-f97068 */
+
+html, body {
+  height: 100%;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+}
+
+.wrapper {
+  flex: 1 0 auto;
+}
+
+footer:not(.footer-original), footer:not(.footer-modif) {
+  flex-shrink: 0;
+}
+
+.wrapper {
+  overflow-x: hidden;
+}
+
+.inner-wrapper {
+  position: relative;
+}
+
+.poppins {
+  font-family: 'Poppins', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+}
+
+.raleway {
+  font-family: 'Raleway', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+}
+
+.white-text {
+  color: #eee;
+}
+
+.black-text {
+  color: #212529;
+}
+
+.red-text {
+  color: #dc3545;
+}
+
+.blacklink, .blacklink:hover, .blacklink-nohover {
+  color: inherit;
+}
+
+.flag {
+  border-radius: 50%;
+}
+
+.intro {
+  background-position: center center;
+  background-repeat: no-repeat;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+  background-color: #dbd56e;
+  height: 100%;
+  width: 100%;
+  position: absolute;
+}
+
+.intro-text {
+  padding-left: 60%;
+  padding-top: 160px;
+  font-size: 56px;
+  font-family: 'Poppins', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-weight: 700;
+}
+
+.main-content-index {
+  margin-top: 665px;
+}
+
+.feature-block {
+  padding-top: 25px;
+}
+
+.feature-block .list-group, .feature-block p {
+  margin-left: 50px;
+  margin-right: 50px;
+}
+
+.feature-block .list-group, .feature-block .list-group-item {
+  background-color: inherit;
+}
+
+.feature-block:nth-of-type(1) {
+  background-color: #dbd56e;
+}
+.feature-block:nth-of-type(2) {
+  background-color: #92d76d;
+}
+
+.search-input-group {
+  width: 50%;
+}
+
+#dictionarySearch, #resourceSearch, .input-group input[type="text"] {
+  border-top-left-radius: 8px;
+  border-bottom-left-radius: 8px;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+#dictionarySearchToggle, #resourceSearchToggle, .input-btn-group button {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+  border-top-right-radius: 8px;
+  border-bottom-right-radius: 8px;
+}
+
+.browse-term, .browse-resource {
+  cursor: pointer;
+}
+
+.browse-term:hover, .browse-resource:hover {
+  -webkit-box-shadow: -1px 9px 40px -12px rgba(0,0,0,0.75);
+  -moz-box-shadow: -1px 9px 40px -12px rgba(0,0,0,0.75);
+  box-shadow: -1px 9px 40px -12px rgba(0,0,0,0.75);
+}
+
+.main-content-profile {
+  margin-left: 20%;
+  margin-right: 20%;
+}
+
+footer:not(.footer-original), footer:not(.footer-modif) {
+  background-color: #dbd56e;
+  overflow: hidden;
+  width: 100%;
+}
+
+.footer-original {
+  background-color: #dbd56e;
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  height: 190px;
+  width: 100%;
+  overflow: hidden;
+}
+
+.footer-modif {
+  background-color: #dbd56e;
+  clear: both;
+  position: absolute;
+  height: 190px;
+  width: 100%;
+  margin-top: -190px;
+}
+
+.em-ic, .tw-ic, .ins-ic {
+  color: #454545;
+}
+
+.em-ic:hover, .tw-ic:hover, .ins-ic:hover {
+  color: #333;
+}
+
+.footer-copyright {
+  background-color: #454545;
+}
+
+.footer-copyright a {
+  color: #dbd56e;
+}
+
+.footer-copyright a:hover {
+  color: #dbd56e;
+  text-decoration: underline;
+}
+
+.rainbow-text {
+  background-image: linear-gradient(45deg, violet, indigo, blue, green, yellow, orange, red, violet);
+  background-size: 800% 800%;
+  -webkit-background-clip: text;
+  -moz-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: rainbow 8s ease infinite;
+}
+
+@keyframes rainbow {
+  0% {
+    background-position: 0% 50%;
+  } 50% {
+    background-position: 100% 25%;
+  } 100% {
+    background-position: 0% 50%;
+  }
+}
+
+@media only screen and (max-width: 768px) {
+  .big-only {
+    display: none;
+  }
+  .intro-text {
+    padding-left: 35%;
+    font-size: 42px;
+  }
+  .main-content-index {
+    margin-top: 750px;
+  }
+  .main-content-profile {
+    margin-left: 5%;
+    margin-right: 5%;
+  }
+  .search-input-group {
+    width: 80%;
+  }
+  .h3-small {
+    font-size: 1.5rem !important;
+  }
+  .h4-small {
+    font-size: 1.25rem !important;
+  }
+}
+
+@media only screen and (min-width: 769px) {
+  .small-only {
+    display: none;
+  }
+}

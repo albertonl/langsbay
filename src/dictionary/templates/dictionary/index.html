@@ -1,0 +1,48 @@
+{% extends 'learning/layout.html' %}
+
+{% load static %}
+
+{% block title %}Dictionary{% endblock %}
+
+{% block stylesheets %}
+<link rel="stylesheet" type="text/css" href="http://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.min.css">
+<link rel="stylesheet" type="text/css" href="{% static 'dictionary/css/main.css' %}">
+{% endblock %}
+
+{% block scripts %}
+<script src="http://code.jquery.com/ui/1.12.1/jquery-ui.min.js" integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU=" crossorigin="anonymous"></script>
+<script type="text/javascript" src="{% static 'dictionary/js/index.js' %}"></script>
+{% endblock %}
+
+{% block navitems %}
+<li><a href="{% url 'browse' %}">Home</a></li>
+<li><a href="{% url 'dictionary' %}">Dictionary</a></li>
+<li><a href="{% url 'user' user.username %}">My profile</a></li>
+<li><a href="{% url 'logout' %}" class="btn btn-secondary btn-block">Log out</a></li>
+{% endblock %}
+
+{% block main %}
+<div class="main-content-dictionary text-center">
+  <h1 class="poppins font-weight-bolder mb-2">Browse the dictionary</h1>
+  <img id="dictionaryLangImg" class="flag mb-4" src="/static/learning/img/flags/{{ user.settings.learning_language.language.flag_filename }}" alt="Language flag" height="40" width="40">
+
+  <div class="input-group ui-widget">
+    <label for="dictionarySearch" class="sr-only">Browse the dictionary</label>
+    <input type="text" id="dictionarySearch" class="form-control" placeholder="Browse the {{ user.settings.learning_language.language.name }} dictionary..." aria-label="Dictionary Search" autofocus>
+    <span class="input-btn-group">
+      <button type="button" class="btn btn-primary" id="dictionarySearchToggle"><i class="fas fa-search" title="Go"></i></button>
+    </span>
+  </div>
+  <div class="mx-5 mt-3">
+    <select id="dictionaryLanguage" class="form-control">
+      <optgroup label="My Languages">
+        <option value="{{ user.settings.learning_language.language.code }}" selected>{{ user.settings.learning_language.language.name }}</option>
+        <option value="{{ user.settings.native_language.code }}">{{ user.settings.native_language.name }}</option>
+      </optgroup>
+    </select>
+  </div>
+  <div class="mt-4">
+    <a role="button" class="btn btn-primary" href="{% url 'dictionary_add' %}">Contribute&nbsp;&nbsp;<i class="fas fa-plus"></i></a>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,96 @@
+{% extends 'learning/layout.html' %}
+
+{% load static %}
+
+{% block title %}New Term{% endblock %}
+
+{% block stylesheets %}
+<link rel="stylesheet" type="text/css" href="http://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.min.css">
+<link rel="stylesheet" type="text/css" href="{% static 'dictionary/css/main.css' %}">
+{% endblock %}
+
+{% block scripts %}
+<script src="http://code.jquery.com/ui/1.12.1/jquery-ui.min.js" integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU=" crossorigin="anonymous"></script>
+<script type="text/javascript" src="{% static 'dictionary/js/index.js' %}"></script>
+<script type="text/javascript" src="{% static 'dictionary/js/add_term.js' %}"></script>
+{% endblock %}
+
+{% block navitems %}
+<li><a href="{% url 'browse' %}">Home</a></li>
+<li><a href="{% url 'dictionary' %}">Dictionary</a></li>
+<li><a href="{% url 'user' user.username %}">My profile</a></li>
+<li><a href="{% url 'logout' %}" class="btn btn-secondary btn-block">Log out</a></li>
+{% endblock %}
+
+{% block main %}
+<form class="main-content-dictionary text-center" action="{% url 'dictionary_add' %}" method="post">
+  {% csrf_token %}
+  <h1 class="poppins font-weight-bolder mb-4">New Term</h1>
+  {% if error_message %}
+  <div class="alert alert-danger my-4">
+    {{ error_message }}
+  </div>
+  {% endif %}
+  <div class="dictionary-term-section text-left needs-validation" id="language">
+    <h2 class="h5 raleway font-weight-bold"><label for="dictionaryLanguage">Language<span class="red-text">*</span></label></h2>
+    <select name="language" id="dictionaryLanguage" class="form-control dictionary-term-language-select" required>
+      <option value="" hidden selected>Select language...</option>
+    </select>
+  </div>
+  <div class="dictionary-term-section text-left needs-validation" id="lemma">
+    <h2 class="h5 raleway font-weight-bold"><label for="lemmaInput">Lemma<span class="red-text">*</span></label></h2>
+    <input type="text" name="lemma" id="lemmaInput" class="form-control" placeholder="Lemma..." maxlength="120" autocomplete="off" autofocus required>
+    <div class="alert alert-success mt-3" id="lemmaValidation" style="display:none;">
+      Available!
+    </div>
+    <button type="button" class="raleway font-weight-bold btn btn-primary mt-2" id="lemmaValidateBtn">Check lemma</button>
+  </div>
+  <div class="dictionary-term-section text-left" id="definition">
+    <h2 class="h5 raleway font-weight-bold"><label for="definitionInput">Definition<span class="red-text">*</span></label></h2>
+    <textarea rows="5" name="definition" id="definitionInput" class="form-control" placeholder="Definition..." maxlength="2000" autocomplete="off" required></textarea>
+  </div>
+  <div class="dictionary-term-section text-left" id="etymology">
+    <h2 class="h5 raleway font-weight-bold"><label for="etymologyInput">Etymology</label></h2>
+    <textarea rows="5" name="etymology" id="etymologyInput" class="form-control" placeholder="Etymology..." maxlength="2000" autocomplete="off"></textarea>
+  </div>
+  <div class="dictionary-term-section text-left" id="sentence1">
+    <h2 class="h5 raleway font-weight-bold"><label for="sentence1Input">Example Sentence 1</label></h2>
+    <input type="text" name="example_sent1" id="sentence1Input" class="form-control" placeholder="Example Sentence 1..." maxlength="500" autocomplete="off">
+  </div>
+  <div class="dictionary-term-section text-left" id="sentence2">
+    <h2 class="h5 raleway font-weight-bold"><label for="sentence2Input">Example Sentence 2</label></h2>
+    <input type="text" name="example_sent2" id="sentence2Input" class="form-control" placeholder="Example Sentence 2..." maxlength="500" autocomplete="off">
+  </div>
+  <div class="dictionary-term-section text-left">
+    <h2 class="h5 raleway font-weight-bold"><label for="translationTextInput">Add translation</label></h2>
+    <div class="input-group ui-widget">
+      <input type="text" id="dictionaryAddTranslationSearch" class="form-control" placeholder="Search for a word..." aria-label="Word Search" readonly>
+      <span class="input-btn-group">
+        <button type="button" class="btn btn-primary" id="dictionaryAddTranslationToggle" disabled>Select</button>
+      </span>
+      <br class="small-only">
+      <select id="dictionaryAddTranslationLanguage" class="form-control dictionary-term-language-select">
+        <option value="" hidden selected>Select language...</option>
+        <optgroup label="My languages">
+          <option value="{{ user.settings.learning_language.language.code }}">{{ user.settings.learning_language.language.name }}</option>
+          <option value="{{ user.settings.native_language.code }}">{{ user.settings.native_language.name }}</option>
+        </optgroup>
+      </select>
+    </div>
+    <div class="alert mt-2" id="dictionaryAddTranslationAlert" style="display:none;">
+    </div>
+  </div>
+  <div class="dictionary-term-section text-center" id="translation">
+    <input type="hidden" name="translation" id="translationIdInput" readonly>
+    <div id="translationContainer">
+    </div>
+  </div>
+  <div class="dictionary-term-section mb-4">
+    <button type="submit" id="dictionaryAddSubmitBtn" class="raleway font-weight-bold btn btn-primary btn-block mt-2" disabled>Submit</button>
+    <button type="reset" id="dictionaryAddResetBtn" class="raleway font-weight-bold btn btn-secondary btn-block mt-2">Reset</button>
+  </div>
+  <div class="my-5">
+    <a class="h5 text-decoration-none" href="{% url 'dictionary' %}"><i class="fas fa-chevron-left"></i>&nbsp;&nbsp;Back to dictionary</a>
+  </div>
+</form>
+{% endblock %}

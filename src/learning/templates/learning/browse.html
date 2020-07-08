@@ -1,0 +1,121 @@
+{% extends 'learning/layout.html' %}
+
+{% load static %}
+
+{% block title %}Browse{% endblock %}
+
+{% block stylesheets %}
+<link rel="stylesheet" type="text/css" href="http://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.min.css">
+{% endblock %}
+
+{% block scripts %}
+<script src="http://code.jquery.com/ui/1.12.1/jquery-ui.min.js" integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU=" crossorigin="anonymous"></script>
+<script type="text/javascript" src="{% static 'learning/js/browse.js' %}"></script>
+{% endblock %}
+
+{% block navitems %}
+<li><a href="{% url 'browse' %}">Home</a></li>
+<li><a href="{% url 'dictionary' %}">Dictionary</a></li>
+<li><a href="{% url 'user' user.username %}">My profile</a></li>
+<li><a href="{% url 'logout' %}" class="btn btn-secondary btn-block">Log out</a></li>
+{% endblock %}
+
+{% block main %}
+<div class="text-center main-content-browse">
+  <div class="browse-header">
+    <h1 class="poppins font-weight-bolder py-3">Welcome,<span class="big-only"></span><br class="small-only">{{ user.username }}.</h1>
+    <p class="pb-3 raleway">What will you learn today?</p>
+    <input type="hidden" id="defaultLanguage" value="{{ user.settings.learning_language.language.code }}">
+  </div>
+  <div class="row">
+    <div class="col-lg-6 col-sm-12 mt-3">
+      <h2 class="h3 poppins font-weight-bolder mb-4"><img class="flag" id="dictionaryFlag" src="/static/learning/img/flags/{{ user.settings.learning_language.language.flag_filename }}" alt="{{ user.settings.learning_language.language.name }}" height="36" width="36">&nbsp;&nbsp;<a class="text-decoration-none blacklink" href="{% url 'dictionary' %}">Dictionary</a></h2>
+      <div class="mx-auto search-input-group">
+        <div class="input-group ui-widget">
+          <label for="dictionarySearch" class="sr-only">Browse the dictionary</label>
+          <input type="text" id="dictionarySearch" class="form-control" placeholder="Browse the {{ user.settings.learning_language.language.name }} dictionary..." aria-label="Dictionary Search">
+          <span class="input-btn-group">
+            <button type="button" class="btn btn-primary" id="dictionarySearchToggle"><i class="fas fa-search" title="Go"></i></button>
+          </span>
+        </div>
+        <div class="mx-5 mt-3">
+          <select id="dictionaryLanguage" class="form-control">
+            <optgroup label="My Languages">
+              <option value="{{ user.settings.learning_language.language.code }}" selected>{{ user.settings.learning_language.language.name }}</option>
+              <option value="{{ user.settings.native_language.code }}">{{ user.settings.native_language.name }}</option>
+            </optgroup>
+          </select>
+        </div>
+        <div>
+          <!-- <span style="cursor:default;">&nbsp;</span> -->
+        </div>
+      </div>
+
+      <!-- 5 most recent terms -->
+      <h3 class="h4 raleway mt-4">Most recent terms in {{ user.settings.learning_language.language.name }}</h3>
+      <p class="raleway text-muted mb-3">Crawled just for you :)</p>
+      {% for term in terms %}
+      <div class="card browse-term mx-5 mb-3" data-ident="{{ term.id }}">
+        <div class="card-body">
+          <p class="h4 poppins font-weight-bold">{{ term.lemma }}</p>
+          <p class="h6 raleway font-weight-normal text-muted">{{ term.added_date }}</p>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    <hr class="my-4 d-md-none d-sm-block">
+    <div class="col-lg-6 col-sm-12 mt-3">
+      <h2 class="h3 poppins font-weight-bolder mb-4"><img class="flag" id="resourceFlag" src="/static/learning/img/flags/{{ user.settings.learning_language.language.flag_filename }}" alt="{{ user.settings.learning_language.language.name }}" height="36" width="36">&nbsp;&nbsp;<a class="text-decoration-none blacklink" href="#">Resources</a></h2>
+      <div class="mx-auto search-input-group">
+        <div class="input-group ui-widget">
+          <label for="dictionarySearch" class="sr-only">Browse the resource library</label>
+          <input type="text" id="resourceSearch" class="form-control" placeholder="Browse the {{ user.settings.learning_language.language.name }} library..." aria-label="Library Search" title="Very soon!" readonly>
+          <span class="input-btn-group">
+            <button type="button" class="btn btn-primary" id="resourceSearchToggle" disabled><i class="fas fa-search" title="Go"></i></button>
+          </span>
+        </div>
+        <div class="mx-5 mt-3">
+          <select id="resourceLanguage" class="form-control" title="Very soon!" disabled>
+            <optgroup label="My Languages">
+              <option value="{{ user.settings.learning_language.language.code }}" selected>{{ user.settings.learning_language.language.name }}</option>
+              <option value="{{ user.settings.native_language.code }}">{{ user.settings.native_language.name }}</option>
+            </optgroup>
+          </select>
+        </div>
+        <div>
+          <!-- <a class="raleway" href="{% verbatim %}{% url 'resources' %}{% endverbatim %}">Advanced search</a> -->
+        </div>
+      </div>
+
+      <!-- 5 most recent resources -->
+      <h3 class="h4 raleway mt-4">Most recent resources in {{ user.settings.learning_language.language.name }}</h3>
+      <p class="raleway text-muted mb-3">What's your favorite?</p>
+      <div class="card browse-resource mx-5 mb-3" data-ident="1">
+        <div class="card-body">
+          <p class="h4 poppins font-weight-bold red-text">(very soon!)</p>
+          <p class="h6 raleway font-weight-normal text-muted">July 2020</p>
+        </div>
+      </div>
+      {% for resource in resources %}
+      <div class="card browse-resource mx-5 mb-3" data-ident="{{ resource.id }}">
+        <div class="card-body">
+          <p class="h4 poUz redzēšanosppins font-weight-bold">
+            {% if resource.type == 'video' %}
+            <i class="fas fa-video"></i>
+            {% elif resource.type == 'document' %}
+            <i class="fas fa-file"></i>
+            {% elif resource.type == 'article' %}
+            <i class="fas fa-newspaper"></i>
+            {% elif resource.type == 'website' %}
+            <i class="fas fa-globe"></i>
+            {% endif %}&nbsp;&nbsp;
+            {{ resource.name }}
+          </p>
+          <p class="h6 raleway font-weight-normal text-muted">{{ resource.type|title }}, {{ resource.added_date }}</p>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+{% endblock %}

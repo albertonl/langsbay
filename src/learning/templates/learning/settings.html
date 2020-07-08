@@ -1,0 +1,69 @@
+{% extends 'learning/layout.html' %}
+
+{% load static %}
+
+{% block title %}Settings{% endblock %}
+
+{% block stylesheets %}
+<link rel="stylesheet" type="text/css" href="{% static 'learning/css/settings.css' %}">
+{% endblock %}
+
+{% block scripts %}
+<script type="text/javascript" src="{% static 'learning/js/settings.js' %}"></script>
+{% endblock %}
+
+{% block navitems %}
+<li><a href="{% url 'browse' %}">Home</a></li>
+<li><a href="{% url 'dictionary' %}">Dictionary</a></li>
+<li><a href="{% url 'user' user.username %}">My profile</a></li>
+<li><a href="{% url 'logout' %}" class="btn btn-secondary btn-block">Log out</a></li>
+{% endblock %}
+
+{% block main %}
+<div class="text-center main-content-profile my-5">
+  <h1 class="poppins font-weight-bolder">{{ user.username }}</h1>
+  <p class="h5 raleway font-weight-normal">Settings</p>
+
+  <div class="alert mt-4" id="settingsAlert" style="display:none;">
+  </div>
+
+  <hr class="my-4">
+
+  <table class="settings-table text-left raleway mx-auto">
+    <tr class="settings-item" id="email">
+      <td class="setting-des"><label for="emailSettings">Email Address</label></td>
+      <td class="setting-mod"><input type="email" id="emailSettings" class="form-control" placeholder="Email address" value="{{ user.email }}" readonly></td>
+    </tr>
+    <tr class="settings-item" id="nativeLanguage">
+      <td class="setting-des">
+        <img id="nativeLanguageSettingsFlag" class="flag big-only" src="/static/learning/img/flags/{{ user.settings.native_language.flag_filename }}" alt="" height="36" width="36">
+        <span class="big-only">&nbsp;&nbsp;</span>
+        <label for="nativeLanguageSettings">I speak...</label>
+      </td>
+      <td class="setting-mod">
+        <select id="nativeLanguageSettings" class="form-control">
+          <option value="{{ user.settings.native_language.code }}" selected>{{ user.settings.native_language.name }}</option>
+        </select>
+      </td>
+    </tr>
+    <tr class="settings-item" id="learningLanguage">
+      <td class="setting-des">
+        <img id="learningLanguageSettingsFlag" class="flag big-only" src="/static/learning/img/flags/{{ user.settings.learning_language.language.flag_filename }}" alt="" height="36" width="36">
+        <span class="big-only">&nbsp;&nbsp;</span>
+        <label for="learningLanguageSettings">I am learning...</label>
+      </td>
+      <td class="setting-mod">
+        <select id="learningLanguageSettings" class="form-control">
+          <option value="{{ user.settings.learning_language.language.code }}" selected>{{ user.settings.learning_language.language.name }}</option>
+        </select>
+      </td>
+    </tr>
+  </table>
+
+  <hr class="my-4">
+
+  <button type="button" id="saveSettingsBtn" class="btn btn-primary btn-lg btn-block font-weight-bolder raleway mt-5 mb-1">Save changes</button>
+  <a role="button" class="btn btn-secondary btn-lg btn-block font-weight-bolder raleway mt-1" href="{% url 'user' user.username %}">Cancel</a>
+  <div class="mt-5"><a class="h5 text-decoration-none" href="{% url 'browse' %}"><i class="fas fa-chevron-left"></i>&nbsp;&nbsp;Back to main page</a></div>
+</div>
+{% endblock %}

@@ -1,0 +1,52 @@
+{% extends 'learning/layout.html' %}
+
+{% load static %}
+
+{% block title %}{{ language.name }} dictionary{% endblock %}
+
+{% block stylesheets %}
+<link rel="stylesheet" type="text/css" href="http://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.min.css">
+<link rel="stylesheet" type="text/css" href="{% static 'dictionary/css/main.css' %}">
+{% endblock %}
+
+{% block scripts %}
+<script src="http://code.jquery.com/ui/1.12.1/jquery-ui.min.js" integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU=" crossorigin="anonymous"></script>
+<script type="text/javascript" src="{% static 'dictionary/js/dictionary_lang.js' %}"></script>
+{% endblock %}
+
+{% block navitems %}
+<li><a href="{% url 'browse' %}">Home</a></li>
+<li><a href="{% url 'dictionary' %}">Dictionary</a></li>
+<li><a href="{% url 'user' user.username %}">My profile</a></li>
+<li><a href="{% url 'logout' %}" class="btn btn-secondary btn-block">Log out</a></li>
+{% endblock %}
+
+{% block main %}
+<div class="main-content-dictionary text-center">
+  <h1 class="poppins font-weight-bolder mb-2">Browse the dictionary</h1>
+  <table class="text-center mx-auto mt-3 mb-4">
+    <tr>
+      <td class="pr-2">
+        <img class="flag" id="dictionaryLangImg" src="/static/learning/img/flags/{{ language.flag_filename }}" alt="{{ language.name }} Language Flag" height="40" width="40">
+      </td>
+      <td class="pl-2">
+        <h2 class="h3 poppins">{{ language.name }}</h2>
+      </td>
+    </tr>
+  </table>
+
+  <div class="input-group ui-widget">
+    <label for="dictionarySearch" class="sr-only">Browse the dictionary</label>
+    <input type="text" id="dictionarySearch" class="form-control" placeholder="Browse the {{ language.name }} dictionary..." aria-label="Dictionary Search" autofocus>
+    <span class="input-btn-group">
+      <button type="button" class="btn btn-primary" id="dictionarySearchToggle"><i class="fas fa-search" title="Go"></i></button>
+    </span>
+  </div>
+  <div>
+    <input type="hidden" id="dictionaryLanguage" value="{{ language.code }}" readonly>
+  </div>
+  <div class="my-5">
+    <a class="h5 text-decoration-none" href="{% url 'dictionary' %}"><i class="fas fa-chevron-left"></i>&nbsp;&nbsp;Other languages</a>
+  </div>
+</div>
+{% endblock %}

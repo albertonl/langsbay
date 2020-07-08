@@ -1,0 +1,309 @@
+{% extends 'learning/layout.html' %}
+
+{% load static %}
+
+{% block title %}{{ term.lemma }}{% endblock %}
+
+{% block stylesheets %}
+<link rel="stylesheet" type="text/css" href="http://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.min.css">
+<link rel="stylesheet" type="text/css" href="{% static 'dictionary/css/main.css' %}">
+{% endblock %}
+
+{% block scripts %}
+<script src="http://code.jquery.com/ui/1.12.1/jquery-ui.min.js" integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU=" crossorigin="anonymous"></script>
+<script type="text/javascript" src="{% static 'dictionary/js/index.js' %}"></script>
+<script type="text/javascript" src="{% static 'dictionary/js/report.js' %}"></script>
+{% endblock %}
+
+{% block navitems %}
+<li><a href="{% url 'browse' %}">Home</a></li>
+<li><a href="{% url 'dictionary' %}">Dictionary</a></li>
+<li><a href="{% url 'user' user.username %}">My profile</a></li>
+<li><a href="{% url 'logout' %}" class="btn btn-secondary btn-block">Log out</a></li>
+{% endblock %}
+
+{% block main %}
+{% autoescape off %}
+<div class="main-content-dictionary-term-search">
+  <div class="input-group ui-widget input-group-dictionary-term">
+    <label for="dictionarySearch" class="sr-only">Browse the dictionary</label>
+    <input type="text" id="dictionarySearch" class="form-control" placeholder="Browse the {{ term.language.name }} dictionary..." aria-label="Dictionary Search" autofocus>
+    <span class="input-btn-group">
+      <button type="button" class="btn btn-primary" id="dictionarySearchToggle"><i class="fas fa-search" title="Go"></i></button>
+    </span>
+    <br class="small-only">
+    <select id="dictionaryLanguage" class="form-control dictionary-term-language-select">
+      <optgroup label="Current Term">
+        <option value="{{ term.language.code }}" selected>{{ term.language.name }}</option>
+      </optgroup>
+      <optgroup label="My Languages">
+        <option value="{{ user.settings.learning_language.language.code }}">{{ user.settings.learning_language.language.name }}</option>
+        <option value="{{ user.settings.native_language.code }}">{{ user.settings.native_language.name }}</option>
+      </optgroup>
+    </select>
+  </div>
+</div>
+<div class="main-content-dictionary text-center">
+  <h1 class="poppins font-weight-bolder mb-2" id="lemma" data-termid="{{ term.id }}">{{ term.lemma }}</h1>
+  <table class="text-center mx-auto mt-3 mb-4" id="language" data-language="{{ term.language.code }}">
+    <tr>
+      <td class="pr-2">
+        <img class="flag" id="termLangImg" src="/static/learning/img/flags/{{ term.language.flag_filename }}" alt="{{ term.language.name }} Language Flag" height="40" width="40">
+      </td>
+      <td class="pl-2">
+        <h2 class="h3 poppins">{{ term.language.name }}</h2>
+      </td>
+    </tr>
+  </table>
+  <span class="modif-btn-group" data-report="lemma">
+    <i class="fas fa-edit edit-field" data-mod="edit" title="Edit this term"></i>&nbsp;&nbsp;
+    <i class="fas fa-exclamation-triangle report-field" data-mod="report" title="Report this term"></i>
+  </span>
+  <div class="dictionary-term-section dictionary-term-section-toggle text-left" id="definition">
+    <h3 class="h5 raleway font-weight-bold">
+      Definition
+      <span class="modif-btn-group" data-report="definition">
+        <i class="fas fa-edit edit-field" data-mod="edit" title="Edit this definition"></i>&nbsp;&nbsp;
+        <i class="fas fa-exclamation-triangle report-field" data-mod="report" title="Report this definition"></i>
+      </span>
+    </h3>
+    {% if term.definition %}
+    <p class="raleway text-justify px-2 pt-1">{{ term.definition }}</p>
+    {% else %}
+    <p class="raleway text-justify text-muted px-2 pt-1"><i>(not available)</i></p>
+    {% endif %}
+  </div>
+  <div class="dictionary-term-section dictionary-term-section-toggle text-left" id="etymology">
+    <h3 class="h5 raleway font-weight-bold">
+      Etymology
+      <span class="modif-btn-group" data-report="etymology">
+        <i class="fas fa-edit edit-field" data-mod="edit" title="Edit this etymology"></i>&nbsp;&nbsp;
+        <i class="fas fa-exclamation-triangle report-field" data-mod="report" title="Report this etymology"></i>
+    </h3>
+    {% if term.etymology %}
+    <p class="raleway text-justify px-2 pt-1">{{ term.etymology }}</p>
+    {% else %}
+    <p class="raleway text-justify text-muted px-2 pt-1"><i>(not available)</i></p>
+    {% endif %}
+  </div>
+  <div class="dictionary-term-section dictionary-term-section-toggle text-left" id="sentence1">
+    <h3 class="h5 raleway font-weight-bold">
+      Example Sentence 1
+      <span class="modif-btn-group" data-report="example_sent1">
+        <i class="fas fa-edit edit-field" data-mod="edit" title="Edit this example sentence"></i>&nbsp;&nbsp;
+        <i class="fas fa-exclamation-triangle report-field" data-mod="report" title="Report this example sentence"></i>
+      </span>
+    </h3>
+    {% if term.example_sent1 %}
+    <p class="raleway text-justify px-2 pt-1"><i>{{ term.example_sent1 }}</i></p>
+    {% else %}
+    <p class="raleway text-justify text-muted px-2 pt-1"><i>(not available)</i></p>
+    {% endif %}
+  </div>
+  <div class="dictionary-term-section dictionary-term-section-toggle text-left" id="sentence2">
+    <h3 class="h5 raleway font-weight-bold">
+      Example Sentence 2
+      <span class="modif-btn-group" data-report="example_sent2">
+        <i class="fas fa-edit edit-field" data-mod="edit" title="Edit this example sentence"></i>&nbsp;&nbsp;
+        <i class="fas fa-exclamation-triangle report-field" data-mod="report" title="Report this example sentence"></i>
+      </span>
+    </h3>
+    {% if term.example_sent2 %}
+    <p class="raleway text-justify px-2 pt-1"><i>{{ term.example_sent2 }}</i></p>
+    {% else %}
+    <p class="raleway text-justify text-muted px-2 pt-1"><i>(not available)</i></p>
+    {% endif %}
+  </div>
+  <div class="dictionary-term-section dictionary-term-section-toggle text-left" id="translations">
+    <h3 class="h5 raleway font-weight-bold">Translations</h3>
+    {% for translation in term.translations.all %}
+    {% for t in translation.terms.all %}
+    {% if not t.language.code == term.language.code %}
+    <div class="translation">
+      <p class="raleway text-justify px-2 pt-2" id="translation-{{ t.language.code }}">
+        <img class="flag" src="/static/learning/img/flags/{{ t.language.flag_filename }}" alt="{{ t.language.name }} Language Flag" aria-label="{{ t.language.name }} Translation" data-toggle="tooltip" data-placement="top" title="{{ t.language.name }}" height="30" width="30">
+        &nbsp;&nbsp;
+        <a class="raleway blacklink-nohover text-decoration-none font-weight-bold" href="{% url 'dictionary_term' t.language.code t.id %}" data-tid="{{ t.id }}" data-language="{{ t.language.code }}">{{ t.lemma }}</a>
+        <span class="modif-btn-group" data-report="translation">
+          <i class="fas fa-edit edit-field" data-mod="edit" title="Edit this translation"></i>&nbsp;&nbsp;
+          <i class="fas fa-exclamation-triangle report-field" data-mod="report" title="Report this translation"></i>
+        </span>
+      </p>
+    </div>
+    {% endif %}
+    {% endfor %}
+    {% empty %}
+    <p class="raleway text-justify text-muted px-2 pt-1"><i>(no translations)</i></p>
+    {% endfor %}
+  </div>
+</div>
+
+<div class="modal fade" id="changeLemmaModal" tabindex="-1" role="dialog" aria-labelledby="changeLemmaLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="raleway modal-title" id="changeLemmaLabel">Change lemma</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p class="raleway">Please, introduce the new lemma:</p>
+        <input type="text" id="changeLemmaInput" class="form-control" placeholder="New Lemma" aria-label="New Lemma" autocomplete="off" autofocus>
+        <div class="alert alert-success mt-3" id="changeLemmaAlert" style="display:none;">
+          Available!
+        </div>
+        <button type="button" class="raleway font-weight-bold btn btn-primary mt-2" id="changeLemmaValidate">Check lemma</button>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="raleway font-weight-bold btn btn-secondary" data-dismiss="modal">Cancel</button>
+        <button type="button" class="raleway font-weight-bold btn btn-primary" id="changeLemmaSubmit" disabled>Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="changeFieldShortModal" tabindex="-1" role="dialog" aria-labelledby="changeFieldShortLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="raleway modal-title" id="changeFieldShortLabel">Edit field</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p class="raleway">Please, introduce the new content:</p>
+        <input type="hidden" id="changeFieldShortPart" readonly>
+        <input type="text" id="changeFieldShortInput" class="form-control" placeholder="New content" aria-label="New Content" autocomplete="off" autofocus>
+        <div class="alert alert-danger mt-2" id="changeFieldShortAlert" style="display:none;">
+          There was an error processing your request.
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="raleway font-weight-bold btn btn-secondary" data-dismiss="modal">Cancel</button>
+        <button type="button" class="raleway font-weight-bold btn btn-primary" id="changeFieldShortSubmit" disabled>Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="changeFieldLongModal" tabindex="-1" role="dialog" aria-labelledby="changeFieldLongLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="raleway modal-title" id="changeFieldLongLabel">Edit field</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p class="raleway">Please, introduce the new content:</p>
+        <input type="hidden" id="changeFieldLongPart" readonly>
+        <textarea rows="5" id="changeFieldLongInput" class="form-control" placeholder="New content" aria-label="New Content" autocomplete="off" autofocus></textarea>
+        <div class="alert alert-danger mt-2" id="changeFieldLongAlert" style="display:none;">
+          There was an error processing your request.
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="raleway font-weight-bold btn btn-secondary" data-dismiss="modal">Cancel</button>
+        <button type="button" class="raleway font-weight-bold btn btn-primary" id="changeFieldLongSubmit" disabled>Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="changeTranslationModal" tabindex="-1" role="dialog" aria-labelledby="changeTranslationLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="raleway modal-title" id="changeTranslationLabel">Edit translation</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p class="raleway" id="changeTranslationHelper">Please, introduce the new translation:</p>
+        <p class="raleway red-text" style="font-size:0.8rem;">(Changing this term will also affect the other translations.)</p>
+        <input type="hidden" id="changeTranslationPart" readonly>
+        <input type="hidden" id="changeTranslationLanguage" readonly>
+        <input type="hidden" id="changeTranslationId" readonly>
+        <div class="input-group ui-widget ui-front">
+          <input type="text" id="changeTranslationInput" class="form-control" placeholder="Browse the dictionary" aria-label="Search for a word" autofocus>
+          <span class="input-btn-group">
+            <button type="button" class="btn btn-primary" id="changeTranslationSelect">Select</button>
+          </span>
+        </div>
+        <div class="alert alert-danger mt-2" id="changeTranslationAlert" style="display:none;">
+          There was an error processing your request.
+        </div>
+        <div class="h5 raleway font-weight-normal text-center mt-2" id="changeTranslationSelection">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="raleway font-weight-bold btn btn-secondary" data-dismiss="modal">Cancel</button>
+        <button type="button" class="raleway font-weight-bold btn btn-primary" id="changeTranslationSubmit" disabled>Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="reportFieldModal" tabindex="-1" role="dialog" aria-labelledby="reportFieldLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="raleway modal-title" id="reportFieldLabel">Report field</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body raleway">
+        <div class="alert alert-success mb-2" id="reportFieldAlert" style="display:none;">
+          Your report has been submitted! You can close this pop-up now.
+        </div>
+        <p>Why are you reporting this content?<span class="red-text">*</span></p>
+        <input type="hidden" id="reportFieldPart" readonly>
+        <input type="hidden" id="reportFieldAux" readonly>
+        <div class="custom-control custom-radio mb-1">
+          <input type="radio" id="reportFieldOption1" name="report_field_reason" class="custom-control-input" value="content_incorrect">
+          <label class="custom-control-label" for="reportFieldOption1">It is incorrect.</label>
+        </div>
+        <div class="custom-control custom-radio mb-1">
+          <input type="radio" id="reportFieldOption2" name="report_field_reason" class="custom-control-input" value="content_inappropriate">
+          <label class="custom-control-label" for="reportFieldOption2">It is inappropriate or NSFW.</label>
+        </div>
+        <div class="custom-control custom-radio mb-1">
+          <input type="radio" id="reportFieldOption3" name="report_field_reason" class="custom-control-input" value="content_spam">
+          <label class="custom-control-label" for="reportFieldOption3">It is spam or misleading.</label>
+        </div>
+        <div class="custom-control custom-radio mb-1">
+          <input type="radio" id="reportFieldOption4" name="report_field_reason" class="custom-control-input" value="content_mistake">
+          <label class="custom-control-label" for="reportFieldOption4">It contains grammatical and/or orthographic errors.</label>
+        </div>
+        <div class="custom-control custom-radio mb-1">
+          <input type="radio" id="reportFieldOption5" name="report_field_reason" class="custom-control-input" value="content_ambiguous">
+          <label class="custom-control-label" for="reportFieldOption5">It is ambiguous.</label>
+        </div>
+        <div class="custom-control custom-radio">
+          <input type="radio" id="reportFieldOption6" name="report_field_reason" class="custom-control-input" value="content_other">
+          <label class="custom-control-label" for="reportFieldOption6">Other (please specify):</label>
+        </div>
+        <div class="mt-1 mb-2">
+          <label for="reportFieldOptionCustom" class="sr-only">Other reason</label>
+          <input type="text" id="reportFieldOptionCustom" class="form-control" placeholder="Other reason..." aria-label="Other reason" autocomplete="off" readonly>
+        </div>
+        <hr>
+        <div class="mt-2 mb-1">
+          <p>Could you provide more details, if possible?</p>
+          <textarea rows="5" id="reportFieldDetails" class="form-control" placeholder="Details for reporting..." aria-label="Details for reporting" autocomplete="off"></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="raleway font-weight-bold btn btn-secondary" id="reportFieldCancel" data-dismiss="modal">Cancel</button>
+        <button type="button" class="raleway font-weight-bold btn btn-primary" id="reportFieldSubmit" disabled>Submit report</button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endautoescape %}
+{% endblock %}

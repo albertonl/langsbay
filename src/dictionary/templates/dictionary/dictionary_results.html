@@ -1,0 +1,60 @@
+{% extends 'learning/layout.html' %}
+
+{% load static %}
+
+{% block title %}Search results{% endblock %}
+
+{% block stylesheets %}
+<link rel="stylesheet" type="text/css" href="http://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.min.css">
+<link rel="stylesheet" type="text/css" href="{% static 'dictionary/css/main.css' %}">
+{% endblock %}
+
+{% block scripts %}
+<script src="http://code.jquery.com/ui/1.12.1/jquery-ui.min.js" integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU=" crossorigin="anonymous"></script>
+<script type="text/javascript" src="{% static 'dictionary/js/index.js' %}"></script>
+{% endblock %}
+
+{% block navitems %}
+<li><a href="{% url 'browse' %}">Home</a></li>
+<li><a href="{% url 'dictionary' %}">Dictionary</a></li>
+<li><a href="{% url 'user' user.username %}">My profile</a></li>
+<li><a href="{% url 'logout' %}" class="btn btn-secondary btn-block">Log out</a></li>
+{% endblock %}
+
+{% block main %}
+<div class="main-content-dictionary-term-search">
+  <div class="input-group ui-widget input-group-dictionary-term">
+    <label for="dictionarySearch" class="sr-only">Browse the dictionary</label>
+    <input type="text" id="dictionarySearch" class="form-control" placeholder="Browse the {{ language.name }} dictionary..." aria-label="Dictionary Search" autofocus>
+    <span class="input-btn-group">
+      <button type="button" class="btn btn-primary" id="dictionarySearchToggle"><i class="fas fa-search" title="Go"></i></button>
+    </span>
+    <br class="small-only">
+    <select id="dictionaryLanguage" class="form-control dictionary-term-language-select">
+      <optgroup label="Current Query">
+        <option value="{{ language.code }}" selected>{{ language.name }}</option>
+      </optgroup>
+      <optgroup label="My Languages">
+        <option value="{{ user.settings.learning_language.language.code }}">{{ user.settings.learning_language.language.name }}</option>
+        <option value="{{ user.settings.native_language.code }}">{{ user.settings.native_language.name }}</option>
+      </optgroup>
+    </select>
+  </div>
+</div>
+<div class="main-content-dictionary text-center">
+  {% if status == 'no_results' %}
+  <h1 class="poppins font-weight-bolder mb-2" id="heading">No results :/</h1>
+  <p class="raleway font-weight-normal mb-4">{{ message }}</p>
+  {% elif status == 'found_results' %}
+  <h1 class="poppins font-weight-bolder mb-2" id="heading">&#34;{{ query }}&#34;</h1>
+  <p class="raleway font-weight-normal mb-4 px-5">We couldn't find &#34;{{ query }}&#34; within the {{ language.name }} dictionary, but maybe you meant one of these:</p>
+  {% for term in terms %}
+  <div class="dictionary-term-section text-left mt-4">
+    <img class="flag" id="termLangImg" src="/static/learning/img/flags/{{ term.language.flag_filename }}" alt="{{ term.language.name }} Language Flag" data-toggle="tooltip" data-placement="top" title="{{ term.language.name }}" height="40" width="40">&nbsp;&nbsp;<a class="h4 raleway text-decoration-none blacklink-nohover" href="{% url 'dictionary_term' term.language.code term.id %}">{{ term.lemma }}</a>
+  {% endfor %}
+  {% endif %}
+</div>
+<div class="my-5 text-center">
+  <a class="h5 text-decoration-none" href="{% url 'dictionary' %}"><i class="fas fa-chevron-left"></i>&nbsp;&nbsp;Back to dictionary</a>
+</div>
+{% endblock %}

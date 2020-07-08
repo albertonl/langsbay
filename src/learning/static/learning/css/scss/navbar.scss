@@ -1,0 +1,448 @@
+@import 'https://fonts.googleapis.com/css?family=Raleway|Spectral';
+
+/*  _burgers.scss
+========================================== */
+// Burger parts
+//
+// (---) top    -> &::before
+// [---] middle -> &
+// (---) bottom -> &::after
+
+
+// Vendor prefixes
+$sass-burger-add-vendor-prefixes: true !default;
+
+// Burger
+@mixin burger($width: 30px, $height: 5px, $gutter: 3px, $color: #000, $border-radius: 0, $transition-duration: .3s) {
+    $burger-height: $height !global;
+    $burger-gutter: $gutter !global;
+
+    position: relative;
+    margin-top: $height + $gutter;
+    margin-bottom: $height + $gutter;
+
+    @if $sass-burger-add-vendor-prefixes {
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+    }
+    user-select: none;
+
+    // 1. Fixes jagged edges in Firefox, see issue #10.
+    &, &::before, &::after {
+        display: block;
+        width: $width;
+        height: $height;
+        background-color: $color;
+        outline: 1px solid transparent; // 1
+        @if $border-radius != 0 {
+            border-radius: $border-radius;
+        }
+
+        @if $sass-burger-add-vendor-prefixes {
+            -webkit-transition-property: background-color, -webkit-transform;
+            -moz-transition-property: background-color, -moz-transform;
+            -o-transition-property: background-color, -o-transform;
+        }
+        transition-property: background-color, transform;
+
+        @if $sass-burger-add-vendor-prefixes {
+            -webkit-transition-duration: $transition-duration;
+            -moz-transition-duration: $transition-duration;
+            -o-transition-duration: $transition-duration;
+        }
+        transition-duration: $transition-duration;
+    }
+
+    &::before, &::after {
+        position: absolute;
+        content: "";
+    }
+
+    &::before {
+        top: -($height + $gutter);
+    }
+
+    &::after {
+        top: $height + $gutter;
+    }
+}
+
+
+// Select parts of the burger
+@mixin burger-parts {
+    &, &::before, &::after {
+        @content;
+    }
+}
+
+@mixin burger-top {
+    &::before {
+        @content;
+    }
+}
+
+@mixin burger-middle {
+    & {
+        @content;
+    }
+}
+
+@mixin burger-bottom {
+    &::after {
+        @content;
+    }
+}
+
+
+// Burger animations
+@mixin burger-to-cross($color: auto) {
+    & {
+        background-color: transparent;
+    }
+    @if ($color != auto) {
+        &::before, &::after {
+            background-color: $color;
+        }
+    }
+    &::before {
+        @if $sass-burger-add-vendor-prefixes {
+            -webkit-transform: translateY($burger-gutter + $burger-height) rotate(45deg);
+            -moz-transform: translateY($burger-gutter + $burger-height) rotate(45deg);
+            -ms-transform: translateY($burger-gutter + $burger-height) rotate(45deg);
+            -o-transform: translateY($burger-gutter + $burger-height) rotate(45deg);
+        }
+        transform: translateY($burger-gutter + $burger-height) rotate(45deg);
+    }
+    &::after {
+        @if $sass-burger-add-vendor-prefixes {
+            -webkit-transform: translateY(-($burger-gutter + $burger-height)) rotate(-45deg);
+            -moz-transform: translateY(-($burger-gutter + $burger-height)) rotate(-45deg);
+            -ms-transform: translateY(-($burger-gutter + $burger-height)) rotate(-45deg);
+            -o-transform: translateY(-($burger-gutter + $burger-height)) rotate(-45deg);
+        }
+        transform: translateY(-($burger-gutter + $burger-height)) rotate(-45deg);
+    }
+}
+
+/*  COLORS
+========================================== */
+$black: #000000;
+$white: #ffffff;
+$gray: #2a2a2a;
+$gold: #b7ac7f;
+
+/*  FONTS
+========================================== */
+
+$raleway: 'Raleway', sans-serif;
+$spectral: 'Spectral', serif;
+
+
+/*  MIXINS
+========================================== */
+
+@mixin transform($transform) {
+  -webkit-transform: $transform;
+     -moz-transform: $transform;
+      -ms-transform: $transform;
+       -o-transform: $transform;
+          transform: $transform;
+}
+
+@mixin transition($transition) {
+  -webkit-transition: #{$transition};
+     -moz-transition: #{$transition};
+       -o-transition: #{$transition};
+          transition: #{$transition};
+}
+
+@mixin transition-delay($transition-delay) {
+  -webkit-transition-delay: #{$transition-delay};
+     -moz-transition-delay: #{$transition-delay};
+       -o-transition-delay: #{$transition-delay};
+          transition-delay: #{$transition-delay};
+}
+
+/*  RESET
+========================================== */
+
+*, *:before, *:after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  width: 100%;
+  height: 100%;
+
+  &.overflow {
+    overflow: hidden;
+  }
+}
+
+/*  LOGO
+========================================== */
+
+@media only screen and (max-device-width: 768px) {
+  html {
+    height: calc(100% + 60px);
+    min-height: calc(100% + 60px);
+  }
+}
+
+.navbar {
+  background-color: #9fc2cc;
+}
+
+.logo-top {
+  top: 10px;
+  left: 10px;
+  z-index: 10;
+
+  img {
+    height: 75px;
+    padding-left: 15px;
+    padding-top: 15px;
+    padding-bottom: 15px;
+  }
+}
+
+/*  BURGER
+========================================== */
+
+.burger {
+  display: inline;
+  background-color: #9fc2cc;
+  width: 50px;
+  height: 50px;
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  border-radius: 4px;
+  z-index: 10;
+
+  span {
+    @include burger(30px, 3px, 6px, $gray); // gray
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-left: -15px;
+    margin-top: -1.5px;
+  }
+
+  &.clicked {
+    span {
+      @include burger-to-cross;
+
+      &:before, &:after {
+        background-color: $white;
+      }
+    }
+  }
+
+  &:hover {
+    cursor: pointer;
+  }
+}
+
+
+/*  NAV
+========================================== */
+
+.navbar {
+  overflow-y: hidden;
+}
+
+nav {
+  background-color: $gray;
+  position: fixed;
+  z-index: 9;
+  top: 0;
+  right: 0;
+  height: 100%;
+  max-width: 515px;
+  width: 100%;
+  padding: 100px 40px 60px 40px;
+  overflow-y: scroll;
+  @include transform(translateX(100%));
+  @include transition(transform .55s cubic-bezier(0.785, 0.135, 0.15, 0.86));
+
+  &.show {
+    @include transform(translateX(0px));
+
+    ul.main {
+      li {
+        @include transform(translateX(0px));
+        opacity: 1;
+
+        @for $i from 1 to 10 {
+          &:nth-child(#{$i}) {
+            transition-delay: $i * 0.15s;
+          }
+        }
+      }
+    }
+
+    .about, .social, ul.sub {
+      @include transform(translateY(0px));
+      opacity: 1;
+      transition-delay: .85s;
+    }
+  }
+
+  @media (min-width: 667px) {
+    padding: 120px 90px 70px 90px;
+  }
+
+  ul.main {
+    list-style-type: none;
+
+    li {
+      margin-bottom: 20px;
+      @include transform(translateX(40px));
+      opacity: 0;
+      @include transition(all .3s ease);
+
+      &:last-of-type {
+        margin-bottom: 0px;
+      }
+
+      a {
+        color: $white;
+        font-family: $raleway;
+        text-decoration: none;
+        text-transform: uppercase;
+        font-size: 1.5rem;
+        display: block;
+        letter-spacing: 5px;
+        font-weight: 600;
+        padding: 10px 0;
+        @include transition(all .3s ease);
+
+        span {
+          color: $gold;
+        }
+
+        &:hover {
+          color: $gold;
+        }
+      }
+    }
+  }
+
+  .about {
+    margin-top: 40px;
+    @include transform(translateY(30px));
+    opacity: 0;
+    @include transition(all .4s ease);
+
+    p {
+      color: $white;
+      font-family: $spectral;
+      font-size: 1.05rem;
+      letter-spacing: 0.5px;
+      line-height: 170%;
+    }
+  }
+
+  .social {
+    margin-top: 40px;
+    position: relative;
+    padding-bottom: 30px;
+    @include transform(translateY(30px));
+    opacity: 0;
+    @include transition(all .4s ease);
+
+    &:after {
+      content: "";
+      width: 230px;
+      height: 2px;
+      background-color: $gold;
+      position: absolute;
+      bottom: 0;
+      left: 0;
+    }
+
+    a {
+      display: inline-block;
+      width: 30px;
+      height: 30px;
+      margin-right: 25px;
+
+      &:last-of-type {
+        margin-right: 0px;
+      }
+
+      &:hover {
+        svg {
+          path, circle {
+            fill: $gold;
+          }
+        }
+      }
+
+      svg {
+        width: 100%;
+        height: 100%;
+
+        path, circle {
+          fill: $white;
+          @include transition(all .3s ease);
+        }
+      }
+    }
+  }
+
+  ul.sub {
+    list-style-type: none;
+    margin-top: 40px;
+    @include transform(translateY(30px));
+    opacity: 0;
+    @include transition(all .4s ease);
+
+    li {
+      margin-bottom: 10px;
+
+      &:last-of-type {
+        margin-bottom: 0px;
+      }
+
+      a {
+        color: $white;
+        font-family: $raleway;
+        letter-spacing: 1px;
+        font-size: 0.9rem;
+        text-decoration: none;
+        @include transition(all .3s ease);
+
+        &:hover {
+          color: $gold;
+        }
+      }
+    }
+  }
+}
+
+
+/*  OVERLAY
+========================================== */
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1;
+  width: 100%;
+  height:100%;
+  @include transition(all 0.3s ease-in-out);
+  background-color: $gold;
+  opacity: 0;
+  visibility: hidden;
+
+  &.show {
+    opacity: 0.8;
+    visibility: visible;
+  }
+}
