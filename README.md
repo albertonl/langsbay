@@ -1,4 +1,4 @@
-# Final Project: Langsbay
+# Langsbay
 
 [![Build Status](https://travis-ci.com/albertonl/langsbay.svg?branch=master)](https://travis-ci.com/albertonl/langsbay)
 
