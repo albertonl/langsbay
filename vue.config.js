@@ -4,6 +4,7 @@ module.exports = {
   publicPath: 'http://0.0.0.0:8080/',
   outputDir: './dist/',
   lintOnSave: true,
+  runtimeCompiler: true,
   chainWebpack: config => {
     config.optimization
       .splitChunks(false);
@@ -24,11 +25,12 @@ module.exports = {
   configureWebpack: {
     resolve: {
       alias: {
-        '@': __dirname + '/client'
+        '@': __dirname + '/client',
       }
     },
     entry: {
-      app: './client/src/main.js'
+      app: './client/src/main.js',
+      frame: './client/src/frame.js'
     }
   }
 };
