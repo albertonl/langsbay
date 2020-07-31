@@ -1,6 +1,6 @@
 # Langsbay
 
-[![Build Status](https://travis-ci.com/albertonl/langsbay.svg?branch=master)](https://travis-ci.com/albertonl/langsbay) [![Coverage Status](https://coveralls.io/repos/github/albertonl/langsbay/badge.svg?branch=master)](https://coveralls.io/github/albertonl/langsbay?branch=master)
+[![Build Status](https://travis-ci.com/albertonl/langsbay.svg?branch=master)](https://travis-ci.com/albertonl/langsbay)
 
 <img src="/src/learning/static/learning/img/logo-dark.png" alt="Langsbay Logo" width="350">
 
