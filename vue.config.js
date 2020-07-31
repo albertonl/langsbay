@@ -25,7 +25,7 @@ module.exports = {
   configureWebpack: {
     resolve: {
       alias: {
-        '@': __dirname + '/client',
+        '@': __dirname + '/client'
       }
     },
     entry: {
