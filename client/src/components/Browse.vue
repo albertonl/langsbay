@@ -33,7 +33,7 @@
         <!-- 5 most recent terms -->
         <h3 class="h4 raleway mt-4">Most recent terms in {{ learning_lang.name }}</h3>
         <p class="raleway text-muted mb-3">Crawled just for you :)</p>
-        <div v-for="term in terms" class="card browse-term mx-5 mb-3" v-bind:data-ident="term.id">
+        <div v-for="term in terms" class="card browse-term mx-5 mb-3" v-bind:data-ident="term.id" v-bind:key="term.id">
           <div class="card-body">
             <p class="h4 poppins font-weight-bold">{{ term.lemma }}</p>
             <p class="h6 raleway font-weight-normal text-muted">{{ term.added_date }}</p>
@@ -73,7 +73,7 @@
             <p class="h6 raleway font-weight-normal text-muted">September 2020</p>
           </div>
         </div>
-        <!-- <div v-for="resource in resources" class="card browse-resource mx-5 mb-3" v-bind:data-ident="resource.id">
+        <!-- <div v-for="resource in resources" class="card browse-resource mx-5 mb-3" v-bind:data-ident="resource.id" v-bind:key="resource.id">
           <div class="card-body">
             <p class="h4 poppins font-weight-bold">
               <i v-if="resource.type === 'video'" class="fas fa-video"></i>
