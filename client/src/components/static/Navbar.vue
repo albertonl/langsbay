@@ -24,7 +24,7 @@
         <div v-else>
           <li><a href="/browse/">Home</a></li>
           <li><a href="/dictionary/">Dictionary</a></li>
-          <li><a v-bind:href="'u' + username + '/'">My profile</a></li>
+          <li><a v-bind:href="'/u/' + username + '/'">My profile</a></li>
           <li><a href="/accounts/logout/" class="btn btn-secondary btn-block">Log out</a></li>
         </div>
       </ul>

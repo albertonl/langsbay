@@ -71,6 +71,7 @@ def settings_view(request):
     return JsonResponse({"response": "success"})
 
 """ API STUFF """
+# TEMP: API views will be moved into an 'api' app.
 
 def api_get_languages_view(request):
     if not request.method == "POST":
@@ -84,3 +85,44 @@ def api_get_languages_view(request):
             'filename': language.flag_filename()
         })
     return JsonResponse(payload, safe=False)
+
+def api_browse_data_view(request):
+    if not request.method == "POST":
+        return HttpResponseRedirect(reverse("index"))
+    if not request.user.is_authenticated:
+        return JsonResponse({
+            "success": False,
+            "noauth": True
+        })
+    try:
+        payload = {
+            "success": True,
+            "username": request.user.username,
+            "learning_language": {
+                "code": request.user.settings.learning_language.language.code,
+                "name": request.user.settings.learning_language.language.name,
+                "filename": request.user.settings.learning_language.language.flag_filename()
+            },
+            "native_language": {
+                "code": request.user.settings.native_language.code,
+                "name": request.user.settings.native_language.name,
+                "filename": request.user.settings.native_language.flag_filename()
+            },
+            "terms": []
+        }
+
+        terms = DictionaryTerm.objects.filter(language=request.user.settings.learning_language.language).order_by('-added_date')[:5]
+        for term in terms:
+            payload["terms"].append({
+                "id": term.id,
+                "lemma": term.lemma,
+                "added_date": term.added_date
+            })
+    except:
+        return JsonResponse({
+            "success": False,
+            "error_code": 500,
+            "error_message": "Internal Server Error"
+        })
+
+    return JsonResponse(payload)
