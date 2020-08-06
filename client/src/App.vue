@@ -1,16 +1,19 @@
 <template>
   <div id="app">
-    <browse></browse>
+    <!-- <browse></browse> -->
+    <profile user="" />
   </div>
 </template>
 
 <script>
 import Browse from './components/Browse.vue'
+import Profile from './components/Profile.vue'
 
 export default {
   name: 'App',
   components: {
-    Browse
+    Browse,
+    Profile
   }
 }
 </script>

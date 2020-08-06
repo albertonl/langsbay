@@ -10,5 +10,6 @@ urlpatterns = [
 
     # API
     path("get/languages/", views.api_get_languages_view, name="getlangs"),
-    path("api/browse_data/", views.api_browse_data_view, name="browse_data")
+    path("api/browse_data/", views.api_browse_data_view, name="browse_data"),
+    path("api/user/", views.api_user_view, name="user_data")
 ]

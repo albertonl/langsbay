@@ -130,13 +130,13 @@
           if (reload_count < 3) { // only three reloads in order to avoid abuse
             if (data.error_code && data.error_message) {
               if (confirm(`Langsbay API - HTTP ${data.error_code}: ${data.error_message}\nWould you like to force a new request to the API?`)) {
-                this.$forceUpdate();
                 reload_count++;
+                this.$forceUpdate();
               }
             } else {
               if (confirm('The Langsbay API seems unreachable.\nWould you like to force a new request to the API?')) {
-                this.$forceUpdate();
                 reload_count++;
+                this.$forceUpdate();
               }
             }
           } else {

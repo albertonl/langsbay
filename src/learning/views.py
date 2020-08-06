@@ -14,7 +14,7 @@ from .models import Language, LearningLanguage, LanguageLevel, LanguageLevelCEFR
 def index_view(request):
     if request.user.is_authenticated:
         return HttpResponseRedirect(reverse("browse"))
-    return render(request, "learning/index.html", {})
+    return render(request, "learning/index.html", {"language_count": Language.objects.count()})
 
 @ensure_csrf_cookie
 @login_required
@@ -118,6 +118,52 @@ def api_browse_data_view(request):
                 "lemma": term.lemma,
                 "added_date": term.added_date
             })
+    except:
+        return JsonResponse({
+            "success": False,
+            "error_code": 500,
+            "error_message": "Internal Server Error"
+        })
+
+    return JsonResponse(payload)
+
+def api_user_view(request):
+    if not request.method == "POST":
+        return HttpResponseRedirect(reverse("index"))
+
+    try:
+        username = request.POST["u"]
+        user = User.objects.get(username=username)
+        payload = {
+            "success": True,
+            "self": request.user == user,
+            "id": user.id,
+            "username": user.username,
+            "date_joined": user.date_joined.strftime('%m/%d/%Y %H:%M'),
+            "settings": {
+                "points": user.settings.points,
+                "dcontrib": user.settings.dcontrib,
+                "rcontrib": user.settings.rcontrib,
+                "learning_language": {
+                    "code": user.settings.learning_language.language.code,
+                    "name": user.settings.learning_language.language.name,
+                    "filename": user.settings.learning_language.language.flag_filename(),
+                    "level": user.settings.learning_language.level.level,
+                    "level_cefr": user.settings.learning_language.level_cefr.level if user.settings.learning_language.show_cefr else None
+                },
+                "native_language": {
+                    "code": user.settings.native_language.code,
+                    "name": user.settings.native_language.name,
+                    "filename": user.settings.native_language.flag_filename()
+                }
+            }
+        }
+    except User.DoesNotExist:
+        return JsonResponse({
+            "success": False,
+            "error_code": 404,
+            "error_message": f"User '{username}' was not found."
+        })
     except:
         return JsonResponse({
             "success": False,
