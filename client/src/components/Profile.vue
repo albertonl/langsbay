@@ -102,7 +102,7 @@
 
       // Append data to request.
       const requestData = new FormData();
-      requestData.append('u', encodeURIComponent(this.$props.user));
+      requestData.append('u', this.$route.params.username ? encodeURIComponent(this.$route.params.username) : encodeURIComponent(this.$props.user));
 
       // Send request.
       request.send(requestData);
