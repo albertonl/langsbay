@@ -45,7 +45,7 @@
 </template>
 
 <script>
-  var reload_count = 0;
+  var reloadCount = 0;
   export default {
     name: 'profile',
     props: {
@@ -73,7 +73,7 @@
         const data = JSON.parse(request.responseText);
         if (data.success) {
           // Request successful
-          reload_count = 0;
+          reloadCount = 0;
           this.self = data.self;
           this.username = data.username;
           this.points = data.settings.points;
@@ -82,15 +82,15 @@
           this.date_joined = data.date_joined;
         } else {
           // Request unsuccessful
-          if (reload_count < 3) { // only three reloads in order to avoid abuse
+          if (reloadCount < 3) { // only three reloads in order to avoid abuse
             if (data.error_code && data.error_message) {
               if (confirm(`Langsbay API - HTTP ${data.error_code}: ${data.error_message}\nWould you like to force a new request to the API?`)) {
-                reload_count++;
+                reloadCount++;
                 this.$forceUpdate();
               }
             } else {
               if (confirm('The Langsbay API seems unreachable.\nWould you like to force a new request to the API?')) {
-                reload_count++;
+                reloadCount++;
                 this.$forceUpdate();
               }
             }

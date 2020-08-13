@@ -131,9 +131,18 @@ def api_user_view(request):
     if not request.method == "POST":
         return HttpResponseRedirect(reverse("index"))
 
+    user = None
     try:
         username = request.POST["u"]
         user = User.objects.get(username=username)
+    except KeyError:
+        if not request.user.is_authenticated:
+            return JsonResponse({
+                "success": False,
+                "noauth": True
+            })
+        user = request.user
+    try:
         payload = {
             "success": True,
             "self": request.user == user,
@@ -158,6 +167,8 @@ def api_user_view(request):
                 }
             }
         }
+        if payload["self"]:
+            payload["email"] = user.email
     except User.DoesNotExist:
         return JsonResponse({
             "success": False,
