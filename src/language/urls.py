@@ -15,11 +15,10 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import include, path
-from django.views.generic import TemplateView
+
 urlpatterns = [
     path('', include("learning.urls")),
     path('accounts/', include("accounts.urls")),
     path('dictionary/', include("dictionary.urls")),
-    path('admin/', admin.site.urls),
-    path('vuetest/', TemplateView.as_view(template_name="learning/vuetest.html"), name="vuetest")
+    path('admin/', admin.site.urls)
 ]

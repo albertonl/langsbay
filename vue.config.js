@@ -29,8 +29,7 @@ module.exports = {
       }
     },
     entry: {
-      app: './client/src/main.js',
-      frame: './client/src/frame.js'
+      app: './client/src/main.js'
     }
   }
 };

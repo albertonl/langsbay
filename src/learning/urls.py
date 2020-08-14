@@ -7,6 +7,7 @@ urlpatterns = [
     path("browse/", views.browse_view, name="browse"),
     path("settings/", views.settings_view, name="settings"),
     path("u/<str:username>/", views.profile_view, name="user"),
+    path("vuetest/", views.vuetest_view, name="vuetest"),
 
     # API
     path("get/languages/", views.api_get_languages_view, name="getlangs"),

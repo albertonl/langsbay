@@ -70,6 +70,16 @@ def settings_view(request):
     request.user.settings.learning_language.save()
     return JsonResponse({"response": "success"})
 
+def vuetest_view(request):
+    context = {
+        "view_data": {
+            "auth": request.user.is_authenticated,
+            "username": None if not request.user.is_authenticated else request.user.username
+        }
+    }
+
+    return render(request, "learning/vuetest.html", context)
+
 """ API STUFF """
 # TEMP: API views will be moved into an 'api' app.
 
