@@ -104,56 +104,76 @@
         // resources: null // Recently-added resources in the user's learning language. [DISABLED]
       }
     },
-    async created() {
-      // Fetch user data from the API.
-      const request = new XMLHttpRequest();
-      request.open('POST', '/api/browse_data/');
+    beforeRouteEnter (to, from, next) {
+      next(vm => {
+        vm.fetchData();
+      });
+    },
+    beforeRouteUpdate (to, from, next) {
+      this.username = null;
+      this.learning_lang = null;
+      this.native_lang = null;
+      this.terms = null;
 
-      // eslint-disable-next-line
-      request.setRequestHeader('X-CSRFToken', Cookies.get('csrftoken')); // js-cookie is imported later
+      this.fetchData();
+      next();
+    },
+    methods: {
+      /**
+       * Fetches the data corresponding to the browse view from the API.
+       * @return {undefined}
+       */
+      fetchData () {
+        // Fetch user data from the API.
+        const request = new XMLHttpRequest();
+        request.open('POST', '/api/browse_data/');
 
-      request.onload = () => {
-        const data = JSON.parse(request.responseText);
-        if (data.success) {
-          // Request successful
-          reloadCount = 0;
-          this.username = data.username;
-          this.learning_lang = data.learning_language;
-          this.native_lang = data.native_language;
-          this.terms = data.terms;
-        } else {
-          // Request unsuccessful
-          if (data.noauth) {
-            window.location.href = '/'; // if the user is not authenticated, redirect to main page
-            return;
-          }
-          if (reloadCount < 3) { // only three reloads in order to avoid abuse
-            if (data.error_code && data.error_message) {
-              if (confirm(`Langsbay API - HTTP ${data.error_code}: ${data.error_message}\nWould you like to force a new request to the API?`)) {
-                reloadCount++;
-                this.$forceUpdate();
+        // eslint-disable-next-line
+        request.setRequestHeader('X-CSRFToken', Cookies.get('csrftoken')); // js-cookie is imported later
+
+        request.onload = () => {
+          const data = JSON.parse(request.responseText);
+          if (data.success) {
+            // Request successful
+            reloadCount = 0;
+            this.username = data.username;
+            this.learning_lang = data.learning_language;
+            this.native_lang = data.native_language;
+            this.terms = data.terms;
+          } else {
+            // Request unsuccessful
+            if (data.noauth) {
+              window.location.href = '/'; // if the user is not authenticated, redirect to main page
+              return;
+            }
+            if (reloadCount < 3) { // only three reloads in order to avoid abuse
+              if (data.error_code && data.error_message) {
+                if (confirm(`Langsbay API - HTTP ${data.error_code}: ${data.error_message}\nWould you like to force a new request to the API?`)) {
+                  reloadCount++;
+                  this.$forceUpdate();
+                }
+              } else {
+                if (confirm('The Langsbay API seems unreachable.\nWould you like to force a new request to the API?')) {
+                  reloadCount++;
+                  this.$forceUpdate();
+                }
               }
             } else {
-              if (confirm('The Langsbay API seems unreachable.\nWould you like to force a new request to the API?')) {
-                reloadCount++;
-                this.$forceUpdate();
-              }
+              alert('The Langsbay API seems unreachable. Please, check your internet connection or try again later.');
             }
-          } else {
-            alert('The Langsbay API seems unreachable. Please, check your internet connection or try again later.');
           }
-        }
-      };
+        };
 
-      // Send request.
-      request.send();
-      return;
+        // Send request.
+        request.send();
+        return;
+      }
     },
     computed: {
-      /*
-        Capitalizes the first letter of each word in a string.
-        @param {string} str The string to capitalize.
-        @return {string} The capitalized string.
+     /**
+      * Capitalizes the first letter of each word in a string.
+      * @param  {string} str The string to capitalize.
+      * @return {string}     The capitalized string.
       */
       title: function (str) {
         let splitStr = str.toLowerCase().split(' ');
