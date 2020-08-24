@@ -132,7 +132,7 @@
             // Save to local storage if it is the active user.
             if (this.self) {
               localStorage.setItem('active-user', request.responseText);
-              localStorage.setItem('active-user-lifespan-end', Date.now() + 30000); // useable for 5 minutes (30000 ms) at most
+              localStorage.setItem('active-user-lifespan-end', Date.now() + 60000); // useable for 10 minutes (60000 ms) before it becomes stale
             }
           } else {
             // Request unsuccessful

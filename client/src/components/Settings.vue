@@ -21,7 +21,7 @@
           <label for="nativeLanguageSettings">I speak...</label>
         </td>
         <td class="setting-mod">
-          <select id="nativeLanguageSettings" class="form-control">
+          <select v-on:change="nativeLanguageChange" id="nativeLanguageSettings" class="form-control">
             <option v-bind:value="native_lang.code" selected>{{ native_lang.name }}</option>
           </select>
         </td>
@@ -33,7 +33,7 @@
           <label for="learningLanguageSettings">I am learning...</label>
         </td>
         <td class="setting-mod">
-          <select id="learningLanguageSettings" class="form-control">
+          <select v-on:change="learningLanguageChange" id="learningLanguageSettings" class="form-control">
             <option v-bind:value="learning_lang.code" selected>{{ learning_lang.name }}</option>
           </select>
         </td>
@@ -42,106 +42,175 @@
 
     <hr class="my-4">
 
-    <button type="button" id="saveSettingsBtn" class="btn btn-primary btn-lg btn-block font-weight-bolder raleway mt-5 mb-1">Save changes</button>
+    <button v-on:click="onSaveChanges" type="button" id="saveSettingsBtn" class="btn btn-primary btn-lg btn-block font-weight-bolder raleway mt-5 mb-1">Save changes</button>
     <a role="button" class="btn btn-secondary btn-lg btn-block font-weight-bolder raleway mt-1" v-bind:href="'/u/' + username + '/'">Cancel</a>
     <div class="mt-5"><a class="h5 text-decoration-none" href="/browse/"><i class="fas fa-chevron-left"></i>&nbsp;&nbsp;Back to main page</a></div>
   </div>
 </template>
 
 <script>
-  var reloadCount = 0;
-  var langsData = undefined;
   export default {
     name: 'settings',
     data() {
       return {
+        loaded: false,
         username: null, // username (fetched from the API)
         email: null, // email (fetched from the API)
         native_lang: null,
-        learning_lang: null
+        learning_lang: null,
+        langsData: null, // list of languages
       }
     },
-    async created() {
-      // Fetch data from the API
-      const request = new XMLHttpRequest();
-      request.open('POST', '/api/user/');
+    beforeRouteEnter (to, from, next) {
+      next(vm => {
+        vm.fetchData(); // fetch the active user's data
+        vm.waitUntilLoaded();
+      })
+    },
+    beforeRouteUpdate (to, from, next) {
+      this.username = null;
+      this.email = null;
+      this.native_lang = null;
+      this.learning_lang = null;
 
-      // eslint-disable-next-line
-      request.setRequestHeader('X-CSRFToken', Cookies.get('csrftoken'));
-
-      request.onload = () => {
-        const data = JSON.parse(request.responseText);
-        console.log(data);
-        if (data.success) {
-          // Request successful.
-          reloadCount = 0;
-          this.username = data.username;
-          this.email = data.email;
-          this.native_lang = {
-            code: data.settings.native_language.code,
-            name: data.settings.native_language.name,
-            filename: data.settings.native_language.filename
-          };
-          this.learning_lang = {
-            code: data.settings.learning_language.code,
-            name: data.settings.learning_language.name,
-            filename: data.settings.learning_language.filename
-          };
-        } else {
-          // Request unsuccessful.
-          if (data.noauth) {
-            window.location.href = '/';
-            return;
-          }
-          if (reloadCount < 3) { // only three reloads in order to avoid abuse
-            if (data.error_code && data.error_message) {
-              if (confirm(`Langsbay API - HTTP ${data.error_code}: ${data.error_message}\nWould you like to force a new request to the API?`)) {
-                reloadCount++;
-                this.$forceUpdate();
-              }
+      this.fetchData(); // see above
+      this.waitUntilLoaded();
+      next();
+    },
+    methods: {
+      /**
+       * Fetch the active user's data to be displayed on their settings page.
+       * Saves that data in localStorage and/or pulls it from there it found.
+       * @return {undefined}
+       */
+      fetchData () {
+        if (localStorage.getItem('active-user')) {
+          try {
+            const localData = JSON.parse(localStorage.getItem('active-user'));
+            if (parseInt(localStorage.getItem('active-user-lifespan-end')) > Date.now()) {
+              // Data in localStorage is still valid
+              this.username = localData.username;
+              this.email = localData.email;
+              this.native_lang = {
+                code: localData.settings.native_language.code,
+                name: localData.settings.native_language.name,
+                filename: localData.settings.native_language.filename
+              };
+              this.learning_lang = {
+                code: localData.settings.learning_language.code,
+                name: localData.settings.learning_language.name,
+                filename: localData.settings.learning_language.filename
+              };
+              return;
             } else {
-              if (confirm('The Langsbay API seems unreachable.\nWould you like to force a new request to the API?')) {
-                reloadCount++;
-                this.$forceUpdate();
-              }
+              // Data in localStorage is outdated
+              localStorage.removeItem('active-user');
+              localStorage.removeItem('active-user-lifespan-end');
             }
-          } else {
-            alert('The Langsbay API seems unreachable. Please, check your internet connection or try again later.');
+          } catch (e) {
+            // If there are any doubts, simply remove and later replace the data in localStorage
+            localStorage.removeItem('active-user');
+            localStorage.removeItem('active-user-lifespan-end');
           }
         }
-      };
+        // Fetch data from the API
+        const request = new XMLHttpRequest();
+        request.open('POST', '/api/user/');
 
-      // Send request.
-      // (Not appending any data will give back the active user's information)
-      request.send();
-      return;
-    }
-  };
+        // eslint-disable-next-line
+        request.setRequestHeader('X-CSRFToken', Cookies.get('csrftoken')); // js-cookie is imported later
 
-  document.addEventListener('DOMContentLoaded', () => {
-    // Populate language lists
-    const request = new XMLHttpRequest();
-    request.open('POST', '/get/languages/');
-    // eslint-disable-next-line
-    request.setRequestHeader('X-CSRFToken', Cookies.get('csrftoken'));
+        request.onload = () => {
+          const data = JSON.parse(request.responseText);
+          if (data.success) {
+            // Request successful.
+            this.username = data.username;
+            this.email = data.email;
+            this.native_lang = {
+              code: data.settings.native_language.code,
+              name: data.settings.native_language.name,
+              filename: data.settings.native_language.filename
+            };
+            this.learning_lang = {
+              code: data.settings.learning_language.code,
+              name: data.settings.learning_language.name,
+              filename: data.settings.learning_language.filename
+            };
 
-    request.onload = () => {
-      langsData = JSON.parse(request.responseText);
-      for (let i = 0; i < langsData.length; i++) {
-        // native language select
-        if (langsData[i].code !== document.getElementById('nativeLanguageSettings').value)
-          document.getElementById('nativeLanguageSettings').innerHTML += `<option value="${langsData[i].code}"${langsData[i].code === document.getElementById('learningLanguageSettings').value ? ' hidden' : ''}>${langsData[i].name}</option>`;
-        // learning language select
-        if (langsData[i].code != document.getElementById('learningLanguageSettings').value)
-          document.getElementById('learningLanguageSettings').innerHTML += `<option value="${langsData[i].code}"${langsData[i].code === document.getElementById('nativeLanguageSettings').value ? 'hidden' : ''}>${langsData[i].name}</option>`;
-      }
+            // Save to localStorage
+            localStorage.setItem('active-user', request.responseText);
+            localStorage.setItem('active-user-lifespan-end', Date.now() + 60000); // useable for 10 min (60000 ms) before it becomes stale
+          } else {
+            // Request unsuccessful.
+            if (data.noauth) {
+              window.location.href = '/';
+              return;
+            }
+            alert('The Langsbay API seems unreachable. Please, check your internet connection or try again later.');
+          }
+          this.loaded = true;
+        };
 
-      // Change flag and option visibility
-      document.getElementById('nativeLanguageSettings').addEventListener('change', () => {
+        // Send request.
+        // (Not appending any data will give back the active user's information.)
+        request.send();
+        return;
+      },
+      /**
+       * Fetches a list of languages from the API.
+       * Saves it to localStorage and/or pulls it
+       * from there if found.
+       * @return {undefined}
+       */
+      fetchLanguages () {
+        if (localStorage.getItem('languages-data')) {
+          try {
+            const localData = JSON.parse(localStorage.getItem('languages-data'));
+            if (parseInt(localStorage.getItem('languages-data-lifespan-end')) > Date.now()) {
+              // Data in localStorage is still valid
+              this.langsData = localData;
+              return;
+            } else {
+              // Data in localStorage has become stale
+              localStorage.removeItem('languages-data');
+              localStorage.removeItem('languages-data-lifespan-end');
+            }
+          } catch (e) {
+            // If there are any doubts, simply remove and later replace the data in localStorage
+            localStorage.removeItem('languages-data');
+            localStorage.removeItem('languages-data-lifespan-end');
+          }
+        }
+        // Populate language lists.
+        const request = new XMLHttpRequest();
+        request.open('POST', '/get/languages/');
+
+        // eslint-disable-next-line
+        request.setRequestHeader('X-CSRFToken', Cookies.get('csrftoken'));
+
+        request.onload = () => {
+          this.langsData = JSON.parse(request.responseText);
+          for (let i = 0; i < this.langsData.length; i++) {
+            // native language select
+            if (this.langsData[i].code !== document.getElementById('nativeLanguageSettings').value)
+              document.getElementById('nativeLanguageSettings').innerHTML += `<option value="${this.langsData[i].code}"${this.langsData[i].code === document.getElementById('learningLanguageSettings').value ? ' hidden' : ''}>${this.langsData[i].name}</option>`;
+            // learning language select
+            if (this.langsData[i].code != document.getElementById('learningLanguageSettings').value)
+              document.getElementById('learningLanguageSettings').innerHTML += `<option value="${this.langsData[i].code}"${this.langsData[i].code === document.getElementById('nativeLanguageSettings').value ? 'hidden' : ''}>${this.langsData[i].name}</option>`;
+          }
+        };
+        request.send();
+      },
+      /**
+       * Logic to be run when the selected native language changes (see v-on:change in-template above.)
+       * Shows the appropriate flag and hides the selected language in the "learning language" list
+       * (you cannot learn and speak (in the sense of being native) the same language at the same time.)
+       */
+      nativeLanguageChange () {
         // Change flag
-        for (let i = 0; i < langsData.length; i++) {
-          if (langsData[i].code === document.getElementById('nativeLanguageSettings').value) {
-            document.getElementById('nativeLanguageSettingsFlag').src = `/static/learning/img/flags/${langsData[i].filename}`;
+        for (let i = 0; i < this.langsData.length; i++) {
+          if (this.langsData[i].code === document.getElementById('nativeLanguageSettings').value) {
+            document.getElementById('nativeLanguageSettingsFlag').src = `/static/learning/img/flags/${this.langsData[i].filename}`;
             break;
           }
         }
@@ -153,12 +222,16 @@
           if (learning.options[i].value === document.getElementById('nativeLanguageSettings').value)
             learning.options[i].hidden = true;
         }
-      });
-      document.getElementById('learningLanguageSettings').addEventListener('change', () => {
+      },
+      /**
+       * Same logic as nativeLanguageChange() above, but with different parameters
+       * (for when the selected learning language changes.)
+       */
+      learningLanguageChange () {
         // Change flag
-        for (let i = 0; i < langsData.length; i++) {
-          if (langsData[i].code === document.getElementById('learningLanguageSettings').value) {
-            document.getElementById('learningLanguageSettingsFlag').src = `/static/learning/img/flags/${langsData[i].filename}`;
+        for (let i = 0; i < this.langsData.length; i++) {
+          if (this.langsData[i].code === document.getElementById('learningLanguageSettings').value) {
+            document.getElementById('learningLanguageSettingsFlag').src = `/static/learning/img/flags/${this.langsData[i].filename}`;
             break;
           }
         }
@@ -170,61 +243,78 @@
           if (native.options[i].value === document.getElementById('learningLanguageSettings').value)
             native.options[i].hidden = true;
         }
-      });
-    };
-    request.send();
+      },
+      /**
+       * Logic to be run whenever the "save changes" button is clicked
+       * (see v-on:click in-template above.)
+       */
+      onSaveChanges () {
+        // Remove outdated data from localStorage
+        localStorage.removeItem('active-user');
+        localStorage.removeItem('active-user-lifespan-end');
 
-    // Save changes
-    document.getElementById('saveSettingsBtn').addEventListener('click', () => {
-      const saveRequest = new XMLHttpRequest();
-      saveRequest.open('POST', '/settings/');
-      // eslint-disable-next-line
-      saveRequest.setRequestHeader('X-CSRFToken', Cookies.get('csrftoken'));
+        // Proceed with request
+        const request = new XMLHttpRequest();
+        request.open('POST', '/settings/');
 
-      saveRequest.onload = () => {
-        const saveRequestData = JSON.parse(saveRequest.responseText);
-        const alert = document.getElementById('settingsAlert');
-        switch(saveRequestData.response) {
-          case 'success':
-            alert.classList.remove('alert-warning', 'alert-danger');
-            alert.classList.add('alert-success');
-            alert.innerHTML = 'Your settings have been updated successfully.';
-            break;
-          case 'nochange':
-            alert.classList.remove('alert-success', 'alert-danger');
-            alert.classList.add('alert-warning');
-            alert.innerHTML = 'You don\'t seem to have changed anything...';
-            break;
-          case 'emailchanged':
-            alert.classList.remove('alert-success', 'alert-warning');
-            alert.classList.add('alert-danger');
-            alert.innerHTML = 'Sorry, you cannot change your email address.';
-            break;
-          case 'samelanguage':
-            alert.classList.remove('alert-success', 'alert-warning');
-            alert.classList.add('alert-danger');
-            alert.innerHTML = 'You can\'t speak and learn the same language at the same time!';
-            break;
-          default:
-            alert.classList.remove('alert-success', 'alert-danger');
-            alert.classList.add('alert-warning');
-            alert.innerHTML = 'An unknown error occurred. Your settings have not been updated.';
-            break;
+        // eslint-disable-next-line
+        request.setRequestHeader('X-CSRFToken', Cookies.get('csrftoken'));
+
+        request.onload = () => {
+          const data = JSON.parse(request.responseText);
+          const alert = document.getElementById('settingsAlert');
+          switch(data.response) {
+            case 'success':
+              alert.classList.remove('alert-warning', 'alert-danger');
+              alert.classList.add('alert-success');
+              alert.innerHTML = 'Your settings have been updated successfully.';
+              break;
+            case 'nochange':
+              alert.classList.remove('alert-success', 'alert-danger');
+              alert.classList.add('alert-warning');
+              alert.innerHTML = 'You don\'t seem to have changed anything...';
+              break;
+            case 'emailchanged':
+              alert.classList.remove('alert-success', 'alert-warning');
+              alert.classList.add('alert-danger');
+              alert.innerHTML = 'Sorry, you cannot change your email address.';
+              break;
+            case 'samelanguage':
+              alert.classList.remove('alert-success', 'alert-warning');
+              alert.classList.add('alert-danger');
+              alert.innerHTML = 'You can\'t speak and learn the same language at the same time!';
+              break;
+            default:
+              alert.classList.remove('alert-success', 'alert-danger');
+              alert.classList.add('alert-warning');
+              alert.innerHTML = 'An unknown error occurred. Your settings have not been updated.';
+              break;
+          }
+          alert.style.display = 'block';
+        };
+
+        // Append data to request.
+        const requestData = new FormData();
+        requestData.append('email', document.getElementById('emailSettings').value);
+        requestData.append('native_language', document.getElementById('nativeLanguageSettings').value);
+        requestData.append('learning_language', document.getElementById('learningLanguageSettings').value);
+
+        // Send request.
+        request.send(requestData);
+      },
+      /**
+       * Recursive function that checks whether the data has been loaded.
+       * @return {undefined}
+       */
+      waitUntilLoaded () {
+        if (!this.loaded) {
+          setTimeout(this.waitUntilLoaded, 100); // checks if loaded every 100ms
+        } else {
+          return;
         }
-        alert.style.display = 'block';
-      };
-
-      // Append data to request.
-      const saveData = new FormData();
-      saveData.append('email', document.getElementById('emailSettings').value);
-      saveData.append('native_language', document.getElementById('nativeLanguageSettings').value);
-      saveData.append('learning_language', document.getElementById('learningLanguageSettings').value);
-
-      // Send request.
-      saveRequest.send(saveData);
-      return false;
-    });
-  });
+      }
+    }
+  };
 </script>
 
 <style scoped>
