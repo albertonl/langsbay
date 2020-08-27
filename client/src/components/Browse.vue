@@ -92,7 +92,6 @@
 </template>
 
 <script>
-  var reloadCount = 0;
   export default {
     name: 'browse',
     data() {
@@ -135,7 +134,6 @@
           const data = JSON.parse(request.responseText);
           if (data.success) {
             // Request successful
-            reloadCount = 0;
             this.username = data.username;
             this.learning_lang = data.learning_language;
             this.native_lang = data.native_language;
@@ -146,21 +144,7 @@
               window.location.href = '/'; // if the user is not authenticated, redirect to main page
               return;
             }
-            if (reloadCount < 3) { // only three reloads in order to avoid abuse
-              if (data.error_code && data.error_message) {
-                if (confirm(`Langsbay API - HTTP ${data.error_code}: ${data.error_message}\nWould you like to force a new request to the API?`)) {
-                  reloadCount++;
-                  this.$forceUpdate();
-                }
-              } else {
-                if (confirm('The Langsbay API seems unreachable.\nWould you like to force a new request to the API?')) {
-                  reloadCount++;
-                  this.$forceUpdate();
-                }
-              }
-            } else {
-              alert('The Langsbay API seems unreachable. Please, check your internet connection or try again later.');
-            }
+            alert('The Langsbay API seems unreachable. Please, check your internet connection or try again later.');
           }
         };
 
