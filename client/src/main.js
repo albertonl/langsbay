@@ -6,6 +6,7 @@ import Overlay from './components/static/Overlay.vue'
 import Footer from './components/static/Footer.vue'
 
 import App from './App.vue'
+import Landing from './components/LandingPage.vue'
 import Browse from './components/Browse.vue'
 import Profile from './components/Profile.vue'
 import Settings from './components/Settings.vue'
@@ -31,7 +32,7 @@ const router = new VueRouter({
     component: Settings
   }, {
     path: '*',
-    component: Settings
+    component: Landing
   }]
 })
 

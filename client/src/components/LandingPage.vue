@@ -1,0 +1,115 @@
+<template>
+  <!-- Landing Page template -->
+  <div class="main-content-index text-center mt-6">
+    <div class="index-section">
+      <div class="index-section-header">
+        <h2 class="h1 poppins font-weight-bolder pb-4" id="features">Features</h2>
+      </div>
+      <div class="row">
+        <div class="col-lg-6 col-sm-12 feature-block">
+          <h2 class="poppins h3"><i class="fas fa-book"></i>&nbsp;&nbsp;Dictionary</h2>
+          <p class="raleway">In the need of a dictionary?<br>See what our community-powered dictionary has to offer:</p>
+          <ul class="list-group list-group-flush raleway">
+            <li class="list-group-item"><i class="fas fa-globe-europe"></i>&nbsp;&nbsp;Support for {{ languageCount }} languages</li>
+            <li class="list-group-item"><i class="fas fa-language"></i>&nbsp;&nbsp;Word and sentence translations</li>
+            <li class="list-group-item"><i class="fas fa-check-double"></i>&nbsp;&nbsp;Verified definitions</li>
+            <li class="list-group-item"><i class="fas fa-landmark"></i>&nbsp;&nbsp;Etymology</li>
+            <li class="list-group-item"><i class="fas fa-question-circle"></i>&nbsp;&nbsp;Example sentences</li>
+          </ul>
+          <h3 class="poppins h5 mt-4">How does it work?</h3>
+          <p class="raleway">Any registered user can view or add terms to the dictionary, so that others can learn vocabulary the easy way. We rely on the users' honesty when giving permission to modify the dictionary, although anyone can report an entry with inappropriate, or simply wrong information to get it reviewed by our team of qualified moderators.</p>
+        </div>
+        <div class="col-lg-6 col-sm-12 feature-block">
+          <h2 class="poppins h3"><i class="fas fa-newspaper"></i>&nbsp;&nbsp;Resources</h2>
+          <p class="raleway">Have you seen a fun video recently, or know an interesting article? <b>Share it!</b></p>
+          <p class="raleway">Our open library stores lots of resources for every kind of language learner. Videos, articles, documents... What's your favorite? While this is a fun way to learn a new language, it is most importantly an effective way to integrate with the real-life community involving the language.</p>
+          <h3 class="poppins h5 mt-4">Comprehensible Input</h3>
+          <p class="raleway">This is one of the most effective ways to learn a new language. It consists of exposing yourself to intelligible language, which is a little ahead of your current level, therefore understanding most of the structures, although not all of the vocabulary nor grammar. In this way, you will subconsciously acquire the language in a better and easier way than staring at a textbook for five hours straight. With Langsbay, this becomes a piece of cake.</p>
+          <ul class="list-group list-group-flush raleway mb-3">
+            <li class="list-group-item"><i class="fas fa-globe-asia"></i>&nbsp;&nbsp;Search by <b>language</b></li>
+            <li class="list-group-item"><i class="fas fa-shoe-prints"></i>&nbsp;&nbsp;Search by <b>level</b></li>
+            <li class="list-group-item"><i class="fas fa-tags"></i>&nbsp;&nbsp;Search by <b>tags</b> and <b>topics</b></li>
+            <li class="list-group-item"><i class="fas fa-video"></i>&nbsp;&nbsp;Search by <b>category</b> (videos, documents...)</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <h2 class="h1 poppins font-weight-bolder pt-5 pb-4" id="pricing">Pricing</h2>
+    <p class="rainbow-text h1 raleway font-weight-bold">FREE FOREVER</p>
+    <p class="raleway">Yup, that's it.</p>
+    <a role="button" class="btn btn-primary btn-lg mt-5 mb-2 px-5" href="/accounts/signup/">Sign up now&nbsp;&nbsp;<i class="fas fa-user-plus"></i></a><br>
+    <a class="raleway" href="/accounts/login/">I already have an account</a>
+  </div>
+</template>
+
+<script>
+  export default {
+    name: 'landing',
+    data() {
+      return {
+        languageCount: null
+      };
+    },
+    beforeRouteEnter (to, from, next) {
+      next(vm => {
+        vm.fetchData();
+      });
+    },
+    beforeRouteUpdate (to, from, next) {
+      this.languageCount = null;
+      this.fetchData();
+      next();
+    },
+    mounted () {
+      window.addEventListener('resize', this.bgImageSettings);
+
+      // INIT //
+      // nextTick will wait to the next DOM update. This is a
+      // (rather quite confusing) alternative to creating a callback
+      // for the DOMContentLoaded event.
+      this.$nextTick().then(() => {
+        this.bgImageSettings();
+      });
+    },
+    beforeDestroy () {
+      window.removeEventListener('resize', this.bgImageSettings);
+    },
+    methods: {
+      /**
+       * Fetches some minor data from the embedded JSON script.
+       */
+      fetchData () {
+        const data = JSON.parse(document.getElementById('view-data').innerText);
+        if (data.language_count)
+          this.languageCount = data.language_count;
+        else
+          this.languageCount = 'many'; // "Support for many languages", still better than nothing ¯\_(ツ)_/¯
+      },
+      /**
+       * Automatic handling of variable settings for the correct positioning
+       * of the background image (../App.vue:12) depending on window size.
+       */
+      bgImageSettings () {
+        var vw = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0);
+        var vh = Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0);
+
+        /*
+        if (((vh * 3588) / 1842) < vw) // 3588x1842 are the dimensions of the image
+          document.getElementById('backgroundimg').style.backgroundSize = 'cover';
+        else
+          document.getElementById('backgroundimg').style.backgroundSize = `auto ${vh}px`;
+        */
+
+       document.getElementById('backgroundimg').style.backgroundSize = 'cover';
+       document.querySelector('.main-content-index').style.marginTop = `${vh+50}px`;
+       document.querySelector('.intro-text').style.paddingTop = `${vw > 768 ? vh/3 : vh/4.5}px`; // NOTE: the vw > 768 condition is intentional
+      }
+    }
+  };
+</script>
+
+<style>
+  .intro {
+    background-image: url("/static/learning/img/background-index.jpg")
+  }
+</style>

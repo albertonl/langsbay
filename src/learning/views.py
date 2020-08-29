@@ -74,7 +74,8 @@ def vuetest_view(request):
     context = {
         "view_data": {
             "auth": request.user.is_authenticated,
-            "username": None if not request.user.is_authenticated else request.user.username
+            "username": None if not request.user.is_authenticated else request.user.username,
+            "view": "landing",
         }
     }
 

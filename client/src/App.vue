@@ -9,6 +9,14 @@
     </div>
 
     <!-- Main -->
+    <div v-if="landing" class="intro text-left" id="backgroundimg">
+      <div class="intro-text">
+        No<br>
+        more<br>
+        courses.<br>
+        <a role="button" class="btn btn-primary btn-lg" href="/accounts/signup/">Get started</a>
+      </div>
+    </div>
     <router-view />
 
     <!-- Footer -->
@@ -24,7 +32,8 @@
     data() {
       return {
         auth: null,
-        username: null
+        username: null,
+        landing: false,
       }
     },
     async created() {
@@ -33,6 +42,8 @@
       const data = JSON.parse(document.getElementById('view-data').textContent);
       this.auth = data.auth;
       this.username = data.auth ? data.username : null;
+
+      if (data.view === 'landing') this.landing = true;
     }
   };
 </script>
