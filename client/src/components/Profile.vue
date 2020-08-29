@@ -47,9 +47,6 @@
 <script>
   export default {
     name: 'profile',
-    props: {
-      user: String // username
-    },
     data() {
       return {
         self: null, // fetched user == active user
