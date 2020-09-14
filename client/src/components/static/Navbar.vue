@@ -2,7 +2,10 @@
   <!-- Regular Navbar -->
   <div class="navbar">
     <div class="logo-top">
-      <a href="/">
+      <router-link v-if="router === 'main'" to="/">
+        <img src="/static/learning/img/logo-dark.svg">
+      </router-link>
+      <a v-else href="/">
         <img src="/static/learning/img/logo-dark.svg">
       </a>
     </div>
@@ -10,22 +13,47 @@
     <nav>
       <ul class="main">
         <li>
-          <a href="/">
+          <router-link v-if="router === 'main'" to="/">
+            <img class="mb-2" src="/static/learning/img/logo-light-noship.png" width="250">
+          </router-link>
+          <a v-else href="/">
             <img class="mb-2" src="/static/learning/img/logo-light-noship.png" width="250">
           </a>
         </li>
         <div v-if="noauth">
-          <li><a href="/">Home</a></li>
-          <li><a href="/#features">Features</a></li>
-          <li><a href="/#pricing">Pricing</a></li>
+          <div v-if="router === 'main'">
+            <li><a href="/">Home</a></li>
+            <li><a href="/#features">Features</a></li>
+            <li><a href="/#pricing">Pricing</a></li>
+          </div>
+          <div v-else>
+            <li><router-link to="/">Home</router-link></li>
+            <li><router-link to="/#features">Features</router-link></li>
+            <li><router-link to="/#pricing">Pricing</router-link></li>
+          </div>
           <li><a href="mailto:albertonl.dev@gmail.com">Contact</a></li>
-          <li><a href="/accounts/login/" class="btn btn-primary btn-block">Log in</a></li>
+          <li>
+            <router-link v-if="router === 'accounts'" to="/accounts/login" class="btn btn-primary btn-block">Log in</router-link>
+            <a v-else href="/accounts/login/" class="btn btn-primary btn-block">Log in</a>
+          </li>
         </div>
         <div v-else>
-          <li><a href="/browse/">Home</a></li>
-          <li><a href="/dictionary/">Dictionary</a></li>
-          <li><a v-bind:href="'/u/' + username + '/'">My profile</a></li>
-          <li><a href="/accounts/logout/" class="btn btn-secondary btn-block">Log out</a></li>
+          <li>
+            <router-link v-if="router === 'main'" to="/browse/">Home</router-link>
+            <a v-else href="/browse/">Home</a>
+          </li>
+          <li>
+            <router-link v-if="router === 'dictionary'" to="/dictionary/">Dictionary</router-link>
+            <a href="/dictionary/">Dictionary</a>
+          </li>
+          <li>
+            <router-link v-if="router === 'main'" v-bind:to="'/u/' + username + '/'">My profile</router-link>
+            <a v-else v-bind:href="'/u/' + username + '/'">My profile</a>
+          </li>
+          <li>
+            <router-link v-if="router === 'accounts'" to="/accounts/logout/" class="btn btn-secondary btn-block">Log out</router-link>
+            <a href="/accounts/logout/" class="btn btn-secondary btn-block">Log out</a>
+          </li>
         </div>
       </ul>
 
@@ -68,7 +96,8 @@
     name: 'langsbayNavbar',
     props: {
       noauth: Boolean,
-      username: String
+      username: String,
+      router: String // see props in App.vue for details
     }
   }
 

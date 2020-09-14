@@ -24,21 +24,21 @@
     <div class="h4 h4-small raleway font-weight-normal"><i>Member since {{ date_joined }}</i></div>
 
     <div v-if="self">
-      <a role="button" class="btn btn-primary btn-lg btn-block font-weight-bolder raleway mt-5 mb-1" href="/settings/">Go to settings</a>
+      <router-link role="button" class="btn btn-primary btn-lg btn-block font-weight-bolder raleway mt-5 mb-1" to="/settings/">Go to settings</router-link>
       <a role="button" class="btn btn-secondary btn-lg btn-block font-weight-bolder raleway mt-1" href="/accounts/logout/">Log out</a>
       <div class="mt-5">
-        <a class="h5 text-decoration-none" href="/browse/">
+        <router-link class="h5 text-decoration-none" to="/browse/">
           <i class="fas fa-chevron-left"></i>&nbsp;&nbsp;
           Back to main page
-        </a>
+        </router-link>
       </div>
     </div>
     <div v-else>
       <div class="mt-5">
-        <a class="h5 text-decoration-none" href="/">
+        <router-link class="h5 text-decoration-none" to="/">
           <i class="fas fa-chevron-left"></i>&nbsp;&nbsp;
           Back to main page
-        </a>
+        </router-link>
       </div>
     </div>
   </div>

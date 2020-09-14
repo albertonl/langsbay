@@ -3,8 +3,8 @@
   <div id="app">
     <!-- Burger navbar -->
     <div id="navbar">
-      <langsbay-navbar v-if="auth" v-bind:username="username" />
-      <langsbay-navbar v-else noauth />
+      <langsbay-navbar v-if="auth" v-bind:username="username" v-bind:router="router" />
+      <langsbay-navbar v-else noauth v-bind:router="router"/>
       <langsbay-navbar-overlay />
     </div>
 
@@ -21,7 +21,7 @@
 
     <!-- Footer -->
     <div id="footer">
-      <langsbay-footer />
+      <langsbay-footer v-bind:router="router" />
     </div>
   </div>
 </template>
@@ -29,6 +29,9 @@
 <script>
   export default {
     name: 'app',
+    props: {
+      router: String // the app to which the router belongs
+    },
     data() {
       return {
         auth: null,
@@ -40,10 +43,10 @@
       // #view-data will be automatically rendered into the appropriate
       // template by Django as a JSON object.
       const data = JSON.parse(document.getElementById('view-data').textContent);
-      this.auth = data.auth;
-      this.username = data.auth ? data.username : null;
+      this.auth = data.info.auth;
+      this.username = data.info.auth ? data.info.username : null;
 
-      if (data.view === 'landing') this.landing = true;
+      this.landing = data.info.view === 'index';
     }
   };
 </script>

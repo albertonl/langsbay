@@ -11,37 +11,74 @@ from dictionary.models import DictionaryTerm
 # from resources.models import Resource
 from .models import Language, LearningLanguage, LanguageLevel, LanguageLevelCEFR
 
+"""
+    Generate a dictionary based on the default data
+    and the provided arguments.
+"""
+def generate_context(request, view, data={}, auth=None):
+    context = {
+        "view_data": {
+            "info": {
+                "view": view,
+                "auth": auth if auth is not None else request.user.is_authenticated,
+                "username": None if not auth and auth is not None else request.user.username
+            },
+            "data": {
+                "language_count": Language.objects.count()
+            }
+        }
+    }
+
+    for key in data:
+        try:
+            context["view_data"]["data"][key] = data[key]
+        except KeyError:
+            # better not to pass it than getting an error page
+            context["view_data"]["data"].pop(key, None)
+
+    return context
+
+"""
+    Views start here
+"""
+
+@ensure_csrf_cookie
 def index_view(request):
     if request.user.is_authenticated:
         return HttpResponseRedirect(reverse("browse"))
-    return render(request, "learning/index.html", {"language_count": Language.objects.count()})
+
+    return render(request, "learning/base.html", generate_context(
+        request,
+        view="index",
+        auth=False # checked right above
+    ))
 
 @ensure_csrf_cookie
 @login_required
 def browse_view(request):
-    if not request.user.is_authenticated:
-        return HttpResponseRedirect(reverse("index"))
-    context = {
-        "terms": DictionaryTerm.objects.filter(language=request.user.settings.learning_language.language).order_by('-added_date')[:5],
-        # resources: Resource.objects.filter(language=request.user.settings.learning_language.language).order_by('-added_date')[:5],
-    }
-    return render(request, "learning/browse.html", context)
+    return render(request, "learning/base.html", generate_context(
+        request,
+        view="browse",
+        auth=True # as per the @login_required decorator
+    ))
 
+@ensure_csrf_cookie
 def profile_view(request, username):
-    user = get_object_or_404(User, username=username)
-    context = {
-        "profile": user,
-        "its_me": user == request.user
-    }
-    return render(request, "learning/profile.html", context)
+    return render(request, "learning/base.html", generate_context(
+        request,
+        view="profile"
+    ))
 
 @ensure_csrf_cookie
 @login_required
 def settings_view(request):
     if not request.method == "POST":
-        if not request.user.is_authenticated:
-            return HttpResponseRedirect(reverse("index"))
-        return render(request, "learning/settings.html", {})
+        return render(request, "learning/base.html", generate_context(
+            request,
+            view="settings",
+            auth=False
+        ))
+    # starting here, this will probably be moved to a future 'api' app
     email = None
     native_language = None
     learning_language = None
@@ -71,15 +108,10 @@ def settings_view(request):
     return JsonResponse({"response": "success"})
 
 def vuetest_view(request):
-    context = {
-        "view_data": {
-            "auth": request.user.is_authenticated,
-            "username": None if not request.user.is_authenticated else request.user.username,
-            "view": "landing",
-        }
-    }
-
-    return render(request, "learning/vuetest.html", context)
+    return render(request, "learning/base.html", generate_context(
+        request,
+        view="index"
+    ))
 
 """ API STUFF """
 # TEMP: API views will be moved into an 'api' app.

@@ -43,8 +43,8 @@
     <hr class="my-4">
 
     <button v-on:click="onSaveChanges" type="button" id="saveSettingsBtn" class="btn btn-primary btn-lg btn-block font-weight-bolder raleway mt-5 mb-1">Save changes</button>
-    <a role="button" class="btn btn-secondary btn-lg btn-block font-weight-bolder raleway mt-1" v-bind:href="'/u/' + username + '/'">Cancel</a>
-    <div class="mt-5"><a class="h5 text-decoration-none" href="/browse/"><i class="fas fa-chevron-left"></i>&nbsp;&nbsp;Back to main page</a></div>
+    <router-link role="button" class="btn btn-secondary btn-lg btn-block font-weight-bolder raleway mt-1" v-bind:to="'/u/' + username + '/'">Cancel</router-link>
+    <div class="mt-5"><router-link class="h5 text-decoration-none" to="/browse/"><i class="fas fa-chevron-left"></i>&nbsp;&nbsp;Back to main page</router-link></div>
   </div>
 </template>
 

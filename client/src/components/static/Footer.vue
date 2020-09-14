@@ -2,7 +2,8 @@
   <!-- Regular Footer -->
   <footer class="page-footer font-small mt-5">
     <div class="text-center">
-      <a href="/"><img class="mb-3" src="/static/learning/img/logo-dark.png" height="75"></a>
+      <router-link v-if="router === 'main'" to="/"><img class="mb-3" src="/static/learning/img/logo-dark.png" height="75"></router-link>
+      <a v-else href="/"><img class="mb-3" src="/static/learning/img/logo-dark.png" height="75"></a>
       <div class="row">
         <div class="col-md-12 py-2">
           <div class="mb-1 flex-center">
@@ -26,7 +27,8 @@
   export default {
     name: 'langsbayFooter',
     props: {
-      footerClass: String
+      footerClass: String,
+      router: String // see props in App.vue for details
     }
   }
 </script>
