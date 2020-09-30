@@ -23,17 +23,34 @@ const router = new VueRouter({
   base: __dirname,
   routes: [{
     path: '/browse',
-    component: Browse
+    component: Browse,
+    name: 'browse',
+    meta: { title: 'Browse' }
   }, {
     path: '/u/:username',
-    component: Profile
+    component: Profile,
+    name: 'profile',
+    meta: { title: 'Profile' }
   }, {
     path: '/settings',
-    component: Settings
+    component: Settings,
+    name: 'settings',
+    meta: { title: 'Settings' }
   }, {
     path: '*',
-    component: Landing
+    component: Landing,
+    name: 'landing',
+    meta: { title: 'Welcome' }
   }]
+})
+
+// document.title processing
+const DEFAULT_TITLE = 'Langsbay'
+router.afterEach((to, from) => {
+  // Use next tick to handle router history correctly
+  Vue.nextTick(() => {
+    document.title = to.meta.title + ' | Langsbay' || DEFAULT_TITLE;
+  })
 })
 
 new Vue({
