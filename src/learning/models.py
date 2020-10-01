@@ -50,4 +50,4 @@ class LearningLanguage(models.Model):
     show_cefr = models.BooleanField()
 
     def __str__(self):
-        return f"{self.language.name} ({self.level_cefr + ' ' if self.level_cefr is not None else ''}{self.level})"
+        return f"{self.language.name} ({self.level_cefr.level + ' ' if self.level_cefr is not None else ''}{self.level})"

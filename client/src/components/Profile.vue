@@ -131,6 +131,8 @@
               localStorage.setItem('active-user', request.responseText);
               localStorage.setItem('active-user-lifespan-end', Date.now() + 60000); // useable for 10 minutes (60000 ms) before it becomes stale
             }
+
+            document.title = `${this.username} | Langsbay`;
           } else {
             // Request unsuccessful
             alert('The Langsbay API seems unreachable. Please, check your internet connection or try again later.');

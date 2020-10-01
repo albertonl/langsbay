@@ -46,10 +46,14 @@ const router = new VueRouter({
 
 // document.title processing
 const DEFAULT_TITLE = 'Langsbay'
-router.afterEach((to, from) => {
+router.afterEach((to, from) => { // eslint-disable-line
   // Use next tick to handle router history correctly
   Vue.nextTick(() => {
     document.title = to.meta.title + ' | Langsbay' || DEFAULT_TITLE;
+    document.querySelector('#navbar .burger').classList.remove('clicked');
+    document.querySelector('#navbar nav').classList.remove('show');
+    document.querySelector('#navbar .overlay').classList.remove('show');
+    document.querySelector('body').classList.remove('overflow');
   })
 })
 
