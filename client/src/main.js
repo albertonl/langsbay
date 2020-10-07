@@ -37,7 +37,7 @@ const router = new VueRouter({
     name: 'settings',
     meta: { title: 'Settings' }
   }, {
-    path: '*',
+    path: '/',
     component: Landing,
     name: 'landing',
     meta: { title: 'Welcome' }

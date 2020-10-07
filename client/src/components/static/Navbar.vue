@@ -22,14 +22,14 @@
         </li>
         <div v-if="noauth">
           <div v-if="router === 'main'">
-            <li><a href="/">Home</a></li>
+            <li><router-link to="/">Home</router-link></li>
             <li><a href="/#features">Features</a></li>
             <li><a href="/#pricing">Pricing</a></li>
           </div>
           <div v-else>
-            <li><router-link to="/">Home</router-link></li>
-            <li><router-link to="/#features">Features</router-link></li>
-            <li><router-link to="/#pricing">Pricing</router-link></li>
+            <li><a href="/">Home</a></li>
+            <li><a href="/#features">Features</a></li>
+            <li><a href="/#pricing">Pricing</a></li>
           </div>
           <li><a href="mailto:albertonl.dev@gmail.com">Contact</a></li>
           <li>
